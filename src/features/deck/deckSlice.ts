@@ -56,7 +56,7 @@ export const updateDeckName = createAsyncThunk(
     const state = getState() as RootState
     const response = await axios({
       method: "patch",
-      url: `http://127.0.0.1:8080/decks/${state.deck.value.id + 1}`,
+      url: `http://127.0.0.1:8080/decks/${state.deck.value.id}`,
       headers: {
         "Content-Type": "application/json",
         "X-API-KEY": "SuperSecretToken",
@@ -103,8 +103,7 @@ export const deckSlice = createSlice({
         state.status = "idle"
         deckSlice.caseReducers.updateName(state, action)
       })
-      .addCase(updateDeckName.rejected, (state, action) => {
-        console.log(action.error)
+      .addCase(updateDeckName.rejected, (state) => {
         state.status = "failed"
         // TODO: pass action.error to error handler, which will display error popup
       })
