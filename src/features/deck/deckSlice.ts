@@ -4,10 +4,13 @@ import { Card } from "../card/cardSlice"
 import { convertCardList } from "./helpers"
 import axios from "axios"
 
-export interface Deck {
-  id: number
+export interface NewDeck {
   name: string
   colors: string[]
+}
+
+export interface Deck extends NewDeck {
+  id: number
 }
 
 export interface CardWithCount extends Card {
@@ -44,6 +47,25 @@ export const getDeckById = createAsyncThunk(
       headers: {
         "Content-Type": "application/json",
         "X-API-KEY": "SuperSecretToken",
+      },
+    })
+    return response.data as RawDeck
+  },
+)
+
+export const createNewDeck = createAsyncThunk(
+  "decks/createNewDeck",
+  async (newDeck: NewDeck) => {
+    const response = await axios({
+      method: "post",
+      url: `http://127.0.0.1:8080/decks`,
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-KEY": "SuperSecretToken",
+      },
+      data: {
+        name: newDeck.name,
+        colors: newDeck.colors,
       },
     })
     return response.data as RawDeck
@@ -92,9 +114,8 @@ export const deckSlice = createSlice({
         state.status = "idle"
         deckSlice.caseReducers.setDeck(state, action)
       })
-      .addCase(getDeckById.rejected, (state, action) => {
+      .addCase(getDeckById.rejected, (state) => {
         state.status = "failed"
-        // TODO: pass action.error to error handler, which will display error popup
       })
       .addCase(updateDeckName.pending, (state) => {
         state.status = "loading"
@@ -105,7 +126,16 @@ export const deckSlice = createSlice({
       })
       .addCase(updateDeckName.rejected, (state) => {
         state.status = "failed"
-        // TODO: pass action.error to error handler, which will display error popup
+      })
+      .addCase(createNewDeck.pending, (state) => {
+        state.status = "loading"
+      })
+      .addCase(createNewDeck.fulfilled, (state, action) => {
+        state.status = "idle"
+        deckSlice.caseReducers.setDeck(state, action)
+      })
+      .addCase(createNewDeck.rejected, (state) => {
+        state.status = "failed"
       })
   },
 })
