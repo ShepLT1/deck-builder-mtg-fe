@@ -10,6 +10,9 @@ import {
 } from "@mui/material"
 import { Link } from "react-router-dom"
 import { getDeckById } from "../deck/deckSlice"
+import BaseModal from "../baseModal/BaseModal"
+import { DeckForm } from "../deck/DeckForm"
+import { updateBaseModal } from "../baseModal/baseModalSlice"
 
 export function Decks() {
   const decks = useAppSelector(selectDecks)
@@ -41,8 +44,11 @@ export function Decks() {
         </List>
       </Grid>
       <Grid item xs={4}>
-        Create New Deck
+        <button onClick={() => dispatch(updateBaseModal(true))}>
+          Create New Deck
+        </button>
       </Grid>
+      <BaseModal children={<DeckForm />} />
     </Grid>
   )
 }
