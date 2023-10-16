@@ -13,13 +13,9 @@ export interface Deck extends NewDeck {
   id: number
 }
 
-export interface CardWithCount extends Card {
-  count: number
-}
-
 export interface CardSection {
   title: string
-  cards: CardWithCount[]
+  cards: Card[]
 }
 
 export interface RawDeck extends Deck {

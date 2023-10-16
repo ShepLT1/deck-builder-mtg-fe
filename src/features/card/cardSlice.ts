@@ -6,6 +6,7 @@ export interface Card {
   id: number
   name: string
   abilities: string[]
+  count: number
 }
 
 export interface Land extends Card {
@@ -41,7 +42,7 @@ export function isCreature(object: any): object is Creature {
 }
 
 const initialState: CardState = {
-  value: { id: 0, name: "", abilities: [] },
+  value: { id: 0, name: "", abilities: [], count: 0 },
   status: "idle",
 }
 
