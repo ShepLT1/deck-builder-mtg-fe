@@ -1,0 +1,11 @@
+.css-78trlr-MuiButtonBase-root-MuiIconButton-root {
+  padding: 0 !important;
+  min-width: none;
+  min-height: none;
+}
+
+.vert-div {
+  display: flex;
+  align-items: top;
+  height: 25px;
+}
