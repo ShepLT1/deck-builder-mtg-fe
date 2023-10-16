@@ -55,7 +55,7 @@ export const getDeckById = createAsyncThunk(
 
 export const createNewDeck = createAsyncThunk(
   "decks/createNewDeck",
-  async (newDeck: NewDeck) => {
+  async (new_deck: NewDeck) => {
     const response = await axios({
       method: "post",
       url: `http://127.0.0.1:8080/decks`,
@@ -63,10 +63,7 @@ export const createNewDeck = createAsyncThunk(
         "Content-Type": "application/json",
         "X-API-KEY": "SuperSecretToken",
       },
-      data: {
-        name: newDeck.name,
-        colors: newDeck.colors,
-      },
+      data: new_deck,
     })
     return response.data as RawDeck
   },
@@ -134,7 +131,7 @@ export const deckSlice = createSlice({
         state.status = "idle"
         deckSlice.caseReducers.setDeck(state, action)
       })
-      .addCase(createNewDeck.rejected, (state) => {
+      .addCase(createNewDeck.rejected, (state, action) => {
         state.status = "failed"
       })
   },
