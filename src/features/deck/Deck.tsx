@@ -63,7 +63,7 @@ export function Deck() {
               </IconButton>
             </Typography>
           )}
-          <h4>{deck.colors}</h4>
+          <h4>{deck.colors.join(", ")}</h4>
         </Grid>
         <Grid item xs={12}>
           {deck.cardList.map((cardSection, i) => {
