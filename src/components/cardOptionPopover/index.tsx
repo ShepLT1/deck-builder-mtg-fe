@@ -2,14 +2,14 @@ import React from "react"
 import Popover from "@mui/material/Popover"
 import IconButton from "@mui/material/IconButton"
 import MoreVertIcon from "@mui/icons-material/MoreVert"
-import Button from "@mui/material/Button"
 import ButtonGroup from "@mui/material/ButtonGroup"
-import { Card } from "../../features/card/cardSlice"
-import { useAppDispatch } from "../../app/hooks"
 import "./style.css"
 
-export default function OptionPopover(props: Card) {
-  const dispatch = useAppDispatch()
+interface OptionPopoverProps {
+  options: JSX.Element[]
+}
+
+export default function OptionPopover(props: OptionPopoverProps) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -22,18 +22,6 @@ export default function OptionPopover(props: Card) {
 
   const open = Boolean(anchorEl)
   const id = open ? "options-popover" : undefined
-
-  // TODO: add onclick handlers for buttons that fire deckSlice thunks/actions
-
-  const buttons = [
-    <Button key="add-one">Add One</Button>,
-    <Button key="rm-one" color="warning">
-      Remove One
-    </Button>,
-    <Button key="rm-all" color="error">
-      Remove All
-    </Button>,
-  ]
 
   return (
     <div className="vert-div">
@@ -59,7 +47,7 @@ export default function OptionPopover(props: Card) {
           aria-label="vertical contained button group"
           variant="text"
         >
-          {buttons}
+          {props.options}
         </ButtonGroup>
       </Popover>
     </div>

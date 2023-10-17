@@ -67,7 +67,9 @@ export function Deck() {
         </Grid>
         <Grid item xs={12}>
           {deck.cardList.map((cardSection, i) => {
-            return <DeckCardSection key={`cardSection${i}`} {...cardSection} />
+            return (
+              <DeckCardSection key={`card-section-${i}`} {...cardSection} />
+            )
           })}
         </Grid>
       </Grid>
