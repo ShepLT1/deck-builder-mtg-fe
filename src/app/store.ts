@@ -5,6 +5,7 @@ import deckReducer from "../features/deck/deckSlice"
 import decksReducer from "../features/decks/decksSlice"
 import alertReducer from "../features/alert/alertSlice"
 import baseModalReducer from "../features/baseModal/baseModalSlice"
+import cardsReducer from "../features/cards/cardsSlice"
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     deck: deckReducer,
     alert: alertReducer,
     baseModal: baseModalReducer,
+    cards: cardsReducer,
   },
 })
 
