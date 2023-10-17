@@ -84,6 +84,44 @@ export const updateDeckName = createAsyncThunk(
   },
 )
 
+export const removeCardInstance = createAsyncThunk(
+  "decks/removeCardInstance",
+  async (card_id: number, { getState }) => {
+    const state = getState() as RootState
+    const response = await axios({
+      method: "patch",
+      url: `http://127.0.0.1:8080/decks/${state.deck.value.id}/cards/${card_id}`,
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-KEY": "SuperSecretToken",
+      },
+      data: {
+        action: "remove",
+      },
+    })
+    return response.data as RawDeck
+  },
+)
+
+export const addCardInstance = createAsyncThunk(
+  "decks/addCardInstance",
+  async (card_id: number, { getState }) => {
+    const state = getState() as RootState
+    const response = await axios({
+      method: "patch",
+      url: `http://127.0.0.1:8080/decks/${state.deck.value.id}/cards/${card_id}`,
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-KEY": "SuperSecretToken",
+      },
+      data: {
+        action: "add",
+      },
+    })
+    return response.data as RawDeck
+  },
+)
+
 export const deckSlice = createSlice({
   name: "deck",
   initialState,
@@ -96,6 +134,9 @@ export const deckSlice = createSlice({
     },
     updateName: (state, action) => {
       state.value.name = action.payload.name
+    },
+    updateCardList: (state, action: PayloadAction<RawDeck>) => {
+      state.value.cardList = convertCardList(action.payload.cardList)
     },
   },
   extraReducers: (builder) => {
@@ -128,6 +169,26 @@ export const deckSlice = createSlice({
         deckSlice.caseReducers.setDeck(state, action)
       })
       .addCase(createNewDeck.rejected, (state, action) => {
+        state.status = "failed"
+      })
+      .addCase(addCardInstance.pending, (state) => {
+        state.status = "loading"
+      })
+      .addCase(addCardInstance.fulfilled, (state, action) => {
+        state.status = "idle"
+        deckSlice.caseReducers.updateCardList(state, action)
+      })
+      .addCase(addCardInstance.rejected, (state, action) => {
+        state.status = "failed"
+      })
+      .addCase(removeCardInstance.pending, (state) => {
+        state.status = "loading"
+      })
+      .addCase(removeCardInstance.fulfilled, (state, action) => {
+        state.status = "idle"
+        deckSlice.caseReducers.updateCardList(state, action)
+      })
+      .addCase(removeCardInstance.rejected, (state, action) => {
         state.status = "failed"
       })
   },
