@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react"
 import { useAppSelector, useAppDispatch } from "../../app/hooks"
-import { selectCards, getCardsByPage } from "./cardsSlice"
+import {
+  selectCards,
+  selectCurrentPage,
+  selectTotalPages,
+  getCardsByPage,
+} from "./cardsSlice"
 import {
   Grid,
   List,
@@ -8,6 +13,7 @@ import {
   ListItemText,
   Typography,
   Button,
+  Pagination,
 } from "@mui/material"
 import { Link } from "react-router-dom"
 import { getCardById } from "../card/cardSlice"
@@ -18,11 +24,19 @@ import { DisplayCard } from "../../components/displayCard"
 
 export function Cards() {
   const cards = useAppSelector(selectCards)
+  const totalPages = useAppSelector(selectTotalPages)
   const dispatch = useAppDispatch()
 
   useEffect(() => {
     dispatch(getCardsByPage(0))
   }, [])
+
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number,
+  ) => {
+    dispatch(getCardsByPage(value - 1))
+  }
 
   return (
     <Grid container width="100%">
@@ -48,6 +62,13 @@ export function Cards() {
         {cards.map((card) => {
           return <DisplayCard key={card.id} card={card} page="card" />
         })}
+      </Grid>
+      <Grid container justifyContent="center">
+        <Pagination
+          count={totalPages}
+          color="primary"
+          onChange={handlePageChange}
+        />
       </Grid>
       {/* <BaseModal children={<CardForm />} /> */}
     </Grid>
