@@ -28,7 +28,7 @@ interface CardProps {
 export function DisplayCard(props: CardProps) {
   const dispatch = useAppDispatch()
 
-  const cardOptionButtons = [
+  const deckCardOptionButtons = [
     <Button
       key="add-one"
       onClick={() => dispatch(addCardInstance(props.card.id))}
@@ -47,9 +47,21 @@ export function DisplayCard(props: CardProps) {
     </Button>,
   ]
 
+  const cardOptionButtons = [
+    <Button key="add-one" onClick={() => {}}>
+      Update Me
+    </Button>,
+    <Button key="rm-one" color="warning" onClick={() => {}}>
+      UpdateMe
+    </Button>,
+    <Button key="rm-all" color="error">
+      UpdateMe
+    </Button>,
+  ]
+
   return (
     <BasicCard
-      sx={{ minWidth: 275, maxWidth: 275, minHeight: 350 }}
+      sx={{ minWidth: 275, maxWidth: 275, minHeight: 350, margin: 1 }}
       variant="outlined"
     >
       <CardContent>
@@ -59,9 +71,13 @@ export function DisplayCard(props: CardProps) {
               {props.card.name}
             </Typography>
           </Grid>
-          <Typography variant="h6" textAlign={"end"} gutterBottom>
-            x{props.card.count}
-          </Typography>
+          {props.page === "deck" ? (
+            <Typography variant="h6" textAlign={"end"} gutterBottom>
+              x{props.card.count}
+            </Typography>
+          ) : (
+            <OptionPopover options={cardOptionButtons} />
+          )}
         </Grid>
         <Grid container justifyContent="space-between">
           <Grid item xs={9}>
@@ -78,7 +94,15 @@ export function DisplayCard(props: CardProps) {
               )}
             </Typography>
           </Grid>
-          <OptionPopover options={cardOptionButtons} />
+          {props.page === "deck" ? (
+            <OptionPopover options={deckCardOptionButtons} />
+          ) : isSpell(props.card) ? (
+            <Typography variant="subtitle1">
+              {props.card.type.substring(0, 4)}
+            </Typography>
+          ) : (
+            <Typography variant="subtitle1">LAND</Typography>
+          )}
         </Grid>
         <hr />
         {isCreature(props.card) ? (
