@@ -7,13 +7,14 @@ import Select, { SelectChangeEvent } from "@mui/material/Select"
 import Checkbox from "@mui/material/Checkbox"
 import InputLabel from "@mui/material/InputLabel"
 import FormControl from "@mui/material/FormControl"
-import { useAppSelector, useAppDispatch } from "../../app/hooks"
-import { selectDeck, createNewDeck } from "./deckSlice"
+import { useAppDispatch } from "../../app/hooks"
+import { createNewDeck } from "./deckSlice"
 import { updateBaseModal } from "../baseModal/baseModalSlice"
-import { Navigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 export function DeckForm() {
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
   const [newDeckName, setNewDeckName] = useState("")
   const [newDeckColors, setNewDeckColors] = useState<string[]>([])
@@ -21,9 +22,14 @@ export function DeckForm() {
   const handleNewDeckSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     console.log({ name: newDeckName, colors: newDeckColors })
-    await dispatch(createNewDeck({ name: newDeckName, colors: newDeckColors }))
+    const result = await dispatch(
+      createNewDeck({ name: newDeckName, colors: newDeckColors }),
+    )
     dispatch(updateBaseModal(false))
-    // TODO: route to single deck page
+    if (result.meta.requestStatus === "fulfilled") {
+      const payload = result.payload as { id: number }
+      navigate(`/decks/${payload.id}`)
+    }
   }
 
   const handleColorChange = (
