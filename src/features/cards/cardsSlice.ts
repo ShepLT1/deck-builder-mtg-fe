@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { RootState } from "../../app/store"
 import axios from "axios"
 import { Card } from "../card/cardSlice"
@@ -12,7 +12,7 @@ export interface CardsState {
 
 const initialState: CardsState = {
   value: [],
-  currentPage: 1,
+  currentPage: 0,
   totalPages: 1,
   status: "idle",
 }
@@ -58,5 +58,7 @@ export const cardsSlice = createSlice({
 export const { updateCards } = cardsSlice.actions
 
 export const selectCards = (state: RootState) => state.cards.value
+export const selectCurrentPage = (state: RootState) => state.cards.currentPage
+export const selectTotalPages = (state: RootState) => state.cards.totalPages
 
 export default cardsSlice.reducer
