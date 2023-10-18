@@ -46,7 +46,12 @@ export function Cards() {
         alignItems={"center"}
       >
         <Grid item xs={10}>
-          <Typography variant="h3" gutterBottom>
+          <Typography
+            variant="h3"
+            textAlign={"left"}
+            sx={{ paddingLeft: 4, paddingTop: 2 }}
+            gutterBottom
+          >
             Cards
           </Typography>
         </Grid>
