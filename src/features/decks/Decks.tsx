@@ -7,6 +7,7 @@ import {
   ListItemButton,
   ListItemText,
   Typography,
+  Button,
 } from "@mui/material"
 import { Link } from "react-router-dom"
 import { getDeckById } from "../deck/deckSlice"
@@ -23,11 +24,31 @@ export function Decks() {
   }, [])
 
   return (
-    <Grid container spacing={2} width="100%">
-      <Grid item xs={8}>
-        <Typography variant="h3" gutterBottom>
-          Decks
-        </Typography>
+    <Grid container width="100%">
+      <Grid
+        container
+        sx={{ marginTop: 2, marginBottom: 2 }}
+        alignItems={"center"}
+      >
+        <Grid item xs={10}>
+          <Typography
+            variant="h3"
+            textAlign={"left"}
+            sx={{ paddingLeft: 4, paddingTop: 2 }}
+            gutterBottom
+          >
+            Decks
+          </Typography>
+        </Grid>
+        <Button
+          variant="contained"
+          sx={{ height: 40 }}
+          onClick={() => dispatch(updateBaseModal(true))}
+        >
+          Create New Deck
+        </Button>
+      </Grid>
+      <Grid item xs={12}>
         <List>
           {decks.map((deck) => {
             return (
@@ -37,16 +58,11 @@ export function Decks() {
                 key={deck.id}
                 onClick={() => dispatch(getDeckById(deck.id))}
               >
-                <ListItemText primary={deck.name} />
+                <ListItemText primary={deck.name} sx={{ paddingLeft: 4 }} />
               </ListItemButton>
             )
           })}
         </List>
-      </Grid>
-      <Grid item xs={4}>
-        <button onClick={() => dispatch(updateBaseModal(true))}>
-          Create New Deck
-        </button>
       </Grid>
       <BaseModal children={<DeckForm />} />
     </Grid>
