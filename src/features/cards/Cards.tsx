@@ -1,26 +1,13 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useAppSelector, useAppDispatch } from "../../app/hooks"
-import {
-  selectCards,
-  selectCurrentPage,
-  selectTotalPages,
-  getCardsByPage,
-} from "./cardsSlice"
-import {
-  Grid,
-  List,
-  ListItemButton,
-  ListItemText,
-  Typography,
-  Button,
-  Pagination,
-} from "@mui/material"
-import { Link } from "react-router-dom"
+import { selectCards, selectTotalPages, getCardsByPage } from "./cardsSlice"
+import { Grid, Pagination } from "@mui/material"
 import { getCardById } from "../card/cardSlice"
 import BaseModal from "../baseModal/BaseModal"
 import { CardForm } from "../card/CardForm"
 import { updateBaseModal } from "../baseModal/baseModalSlice"
 import { DisplayCard } from "../../components/displayCard"
+import { PageHeader } from "../../components/pageHeader"
 
 export function Cards() {
   const cards = useAppSelector(selectCards)
@@ -31,38 +18,20 @@ export function Cards() {
     dispatch(getCardsByPage(0))
   }, [])
 
-  const handlePageChange = (
+  const handlePageChange = async (
     event: React.ChangeEvent<unknown>,
     value: number,
   ) => {
-    dispatch(getCardsByPage(value - 1))
+    await dispatch(getCardsByPage(value - 1))
   }
 
   return (
     <Grid container width="100%">
-      <Grid
-        container
-        sx={{ marginTop: 2, marginBottom: 2 }}
-        alignItems={"center"}
-      >
-        <Grid item xs={10}>
-          <Typography
-            variant="h3"
-            textAlign={"left"}
-            sx={{ paddingLeft: 4, paddingTop: 2 }}
-            gutterBottom
-          >
-            Cards
-          </Typography>
-        </Grid>
-        <Button
-          variant="contained"
-          sx={{ height: 40 }}
-          onClick={() => dispatch(updateBaseModal(true))}
-        >
-          Create New Card
-        </Button>
-      </Grid>
+      <PageHeader
+        title="Cards"
+        buttonTitle="Create New Card"
+        buttonOnClick={() => dispatch(updateBaseModal(true))}
+      />
       <Grid container spacing={0}>
         {cards.map((card) => {
           return <DisplayCard key={card.id} card={card} page="card" />
@@ -75,7 +44,7 @@ export function Cards() {
           onChange={handlePageChange}
         />
       </Grid>
-      {/* <BaseModal children={<CardForm />} /> */}
+      <BaseModal children={<CardForm id={null} />} />
     </Grid>
   )
 }
