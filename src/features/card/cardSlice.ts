@@ -46,11 +46,6 @@ const initialState: CardState = {
   status: "idle",
 }
 
-// The function below is called a thunk and allows us to perform async logic. It
-// can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
-// will call the thunk with the `dispatch` function as the first argument. Async
-// code can then be executed and other actions can be dispatched. Thunks are
-// typically used to make async requests.
 export const getCardById = createAsyncThunk(
   "cards/getCardByIdStatus",
   async (card_id: number) => {
@@ -64,16 +59,107 @@ export const getCardById = createAsyncThunk(
   },
 )
 
+export const createNewLand = createAsyncThunk(
+  "cards/createNewLandStatus",
+  async (land: Land) => {
+    const response = await axios({
+      method: "post",
+      url: `http://127.0.0.1:8080/cards/lands`,
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-KEY": "SuperSecretToken",
+      },
+      data: land,
+    })
+    return response.data
+  },
+)
+
+export const createNewSpell = createAsyncThunk(
+  "cards/createNewSpellStatus",
+  async (spell: Spell) => {
+    const response = await axios({
+      method: "post",
+      url: `http://127.0.0.1:8080/cards/spells`,
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-KEY": "SuperSecretToken",
+      },
+      data: spell,
+    })
+    return response.data
+  },
+)
+
+export const createNewCreature = createAsyncThunk(
+  "cards/createNewCreatureStatus",
+  async (creature: Creature) => {
+    const response = await axios({
+      method: "post",
+      url: `http://127.0.0.1:8080/cards/creatures`,
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-KEY": "SuperSecretToken",
+      },
+      data: creature,
+    })
+    return response.data
+  },
+)
+
+export const updateLand = createAsyncThunk(
+  "cards/updateLandStatus",
+  async (land: Land) => {
+    const response = await axios({
+      method: "post",
+      url: `http://127.0.0.1:8080/cards/lands/${land.id}`,
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-KEY": "SuperSecretToken",
+      },
+      data: land,
+    })
+    return response.data
+  },
+)
+
+export const updateSpell = createAsyncThunk(
+  "cards/updateSpellStatus",
+  async (spell: Spell) => {
+    const response = await axios({
+      method: "post",
+      url: `http://127.0.0.1:8080/cards/spells/${spell.id}`,
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-KEY": "SuperSecretToken",
+      },
+      data: spell,
+    })
+    return response.data
+  },
+)
+
+export const updateCreature = createAsyncThunk(
+  "cards/updateCreatureStatus",
+  async (creature: Creature) => {
+    const response = await axios({
+      method: "post",
+      url: `http://127.0.0.1:8080/cards/creatures/${creature.id}`,
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-KEY": "SuperSecretToken",
+      },
+      data: creature,
+    })
+    return response.data
+  },
+)
+
 export const cardSlice = createSlice({
   name: "card",
   initialState,
-  // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
-    updateCard: (state, action: PayloadAction<Card>) => {
-      // Redux Toolkit allows us to write "mutating" logic in reducers. It
-      // doesn't actually mutate the state because it uses the Immer library,
-      // which detects changes to a "draft state" and produces a brand new
-      // immutable state based off those changes
+    setCard: (state, action: PayloadAction<Card>) => {
       state.value.id = action.payload.id
       state.value.name = action.payload.name
       state.value.abilities = action.payload.abilities
@@ -93,9 +179,58 @@ export const cardSlice = createSlice({
         }
       }
     },
+    setNewCard: (state, action) => {
+      state.value = action.payload
+    },
+    updateName: (state, action) => {
+      state.value.name = action.payload
+    },
+    updateAbilities: (state, action) => {
+      state.value.abilities = action.payload
+    },
+    updateColors: (state, action) => {
+      if (!isLand(state.value)) {
+        return
+      }
+      const land = state.value as Land
+      land.colors = action.payload
+    },
+    updateManaCost: (state, action) => {
+      if (!isSpell(state.value)) {
+        return
+      }
+      const spell = state.value as Spell
+      spell.manaCost = action.payload
+    },
+    updateType: (state, action) => {
+      if (!isSpell(state.value)) {
+        return
+      }
+      const spell = state.value as Spell
+      spell.type = action.payload
+    },
+    updatePower: (state, action) => {
+      if (!isCreature(state.value)) {
+        return
+      }
+      const creature = state.value as Creature
+      creature.power = action.payload
+    },
+    updateToughness: (state, action) => {
+      if (!isCreature(state.value)) {
+        return
+      }
+      const creature = state.value as Creature
+      creature.toughness = action.payload
+    },
+    updateAttributes: (state, action) => {
+      if (!isCreature(state.value)) {
+        return
+      }
+      const creature = state.value as Creature
+      creature.attributes = action.payload
+    },
   },
-  // The `extraReducers` field lets the slice handle actions defined elsewhere,
-  // including actions generated by createAsyncThunk or in other slices.
   extraReducers: (builder) => {
     builder
       .addCase(getCardById.pending, (state) => {
@@ -103,22 +238,87 @@ export const cardSlice = createSlice({
       })
       .addCase(getCardById.fulfilled, (state, action) => {
         state.status = "idle"
-        cardSlice.caseReducers.updateCard(state, action)
+        cardSlice.caseReducers.setCard(state, action)
       })
       .addCase(getCardById.rejected, (state) => {
+        state.status = "failed"
+      })
+      .addCase(createNewLand.pending, (state) => {
+        state.status = "loading"
+      })
+      .addCase(createNewLand.fulfilled, (state, action) => {
+        state.status = "idle"
+        cardSlice.caseReducers.setCard(state, action)
+      })
+      .addCase(createNewLand.rejected, (state) => {
+        state.status = "failed"
+      })
+      .addCase(createNewSpell.pending, (state) => {
+        state.status = "loading"
+      })
+      .addCase(createNewSpell.fulfilled, (state, action) => {
+        state.status = "idle"
+        cardSlice.caseReducers.setCard(state, action)
+      })
+      .addCase(createNewSpell.rejected, (state) => {
+        state.status = "failed"
+      })
+      .addCase(createNewCreature.pending, (state) => {
+        state.status = "loading"
+      })
+      .addCase(createNewCreature.fulfilled, (state, action) => {
+        state.status = "idle"
+        cardSlice.caseReducers.setCard(state, action)
+      })
+      .addCase(createNewCreature.rejected, (state) => {
+        state.status = "failed"
+      })
+      .addCase(updateLand.pending, (state) => {
+        state.status = "loading"
+      })
+      .addCase(updateLand.fulfilled, (state, action) => {
+        state.status = "idle"
+        cardSlice.caseReducers.setCard(state, action)
+      })
+      .addCase(updateLand.rejected, (state) => {
+        state.status = "failed"
+      })
+      .addCase(updateSpell.pending, (state) => {
+        state.status = "loading"
+      })
+      .addCase(updateSpell.fulfilled, (state, action) => {
+        state.status = "idle"
+        cardSlice.caseReducers.setCard(state, action)
+      })
+      .addCase(updateSpell.rejected, (state) => {
+        state.status = "failed"
+      })
+      .addCase(updateCreature.pending, (state) => {
+        state.status = "loading"
+      })
+      .addCase(updateCreature.fulfilled, (state, action) => {
+        state.status = "idle"
+        cardSlice.caseReducers.setCard(state, action)
+      })
+      .addCase(updateCreature.rejected, (state) => {
         state.status = "failed"
       })
   },
 })
 
-export const { updateCard } = cardSlice.actions
+export const {
+  setCard,
+  setNewCard,
+  updateName,
+  updateAbilities,
+  updateColors,
+  updateAttributes,
+  updateManaCost,
+  updatePower,
+  updateToughness,
+  updateType,
+} = cardSlice.actions
 
-// The function below is called a selector and allows us to select a value from
-// the state. Selectors can also be defined inline where they're used instead of
-// in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
 export const selectCard = (state: RootState) => state.card.value
-
-// We can also write thunks by hand, which may contain both sync and async logic.
-// Here's an example of conditionally dispatching actions based on current state.
 
 export default cardSlice.reducer
