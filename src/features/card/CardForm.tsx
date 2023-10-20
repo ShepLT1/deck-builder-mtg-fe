@@ -37,6 +37,7 @@ import {
   Spell,
   Creature,
 } from "./cardSlice"
+import { FormNumberInput } from "../../components/formNumberInput"
 
 interface CardFormProps {
   id: number | null
@@ -50,11 +51,29 @@ export function CardForm(props: CardFormProps) {
   const creature = card as Creature
 
   const colors = ["White", "Blue", "Black", "Red", "Green", "Colorless"]
+  const spellTypes = ["Instant", "Sorcery", "Enchantment", "Artifact"]
   const cardTypes = ["Land", "Spell", "Creature"] as const
   type cardType = (typeof cardTypes)[number]
 
   const [newCardType, setNewCardType] = useState<cardType | "">("")
   const [newAbility, setNewAbility] = useState<string>("")
+  const [whiteMana, setWhiteMana] = useState<number>(0)
+  const [blueMana, setBlueMana] = useState<number>(0)
+  const [blackMana, setBlackMana] = useState<number>(0)
+  const [redMana, setRedMana] = useState<number>(0)
+  const [greenMana, setGreenMana] = useState<number>(0)
+  const [colorlessMana, setColorlessMana] = useState<number>(0)
+  const [anyMana, setAnyMana] = useState<number>(0)
+
+  const formManaArray = [
+    { label: "White", value: whiteMana, onChange: setWhiteMana },
+    { label: "Blue", value: blueMana, onChange: setBlueMana },
+    { label: "Black", value: blackMana, onChange: setBlackMana },
+    { label: "Red", value: redMana, onChange: setRedMana },
+    { label: "Green", value: greenMana, onChange: setGreenMana },
+    { label: "Colorless", value: colorlessMana, onChange: setColorlessMana },
+    { label: "Any", value: anyMana, onChange: setAnyMana },
+  ]
 
   const handleNewCardSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -125,6 +144,12 @@ export function CardForm(props: CardFormProps) {
 
   const handleAbilityDelete = (index: number) => {
     dispatch(updateAbilities(card.abilities.filter((_, i) => i !== index)))
+  }
+
+  const handleSpellTypeChange = (
+    event: SelectChangeEvent<typeof spell.type>,
+  ) => {
+    dispatch(updateType(event.target.value as string))
   }
 
   return (
@@ -210,8 +235,8 @@ export function CardForm(props: CardFormProps) {
                 })}
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
-              {isLand(card) ? (
+            {isLand(card) ? (
+              <Grid item xs={12}>
                 <FormControl sx={{ m: 1, width: 345 }}>
                   <InputLabel id="land-colors-select-label">Colors</InputLabel>
                   <Select
@@ -233,10 +258,55 @@ export function CardForm(props: CardFormProps) {
                     ))}
                   </Select>
                 </FormControl>
-              ) : (
-                <></>
-              )}
-            </Grid>
+              </Grid>
+            ) : isSpell(card) ? (
+              <>
+                <Grid item xs={12}>
+                  <FormControl sx={{ m: 1, width: 345 }}>
+                    <InputLabel id="spell-type-select-label">
+                      Spell Type
+                    </InputLabel>
+                    <Select
+                      labelId="spell-type-select-label"
+                      id="spell-type-select"
+                      required
+                      value={card.type}
+                      onChange={handleSpellTypeChange}
+                    >
+                      {spellTypes.map((type) => (
+                        <MenuItem key={type} value={type}>
+                          {type}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid
+                  item
+                  xs={12}
+                  justifyContent={"space-between"}
+                  sx={{ marginTop: 1 }}
+                >
+                  <Typography
+                    variant="body1"
+                    sx={{ paddingLeft: 3, paddingBottom: 1 }}
+                  >
+                    Mana Cost
+                  </Typography>
+                  {formManaArray.map((inputProps) => {
+                    return (
+                      <FormNumberInput
+                        key={inputProps.label}
+                        {...inputProps}
+                        required={true}
+                      />
+                    )
+                  })}
+                </Grid>
+              </>
+            ) : (
+              <></>
+            )}
             <Grid container direction="row" justifyContent="center">
               <Button variant="contained" type="submit">
                 Submit
