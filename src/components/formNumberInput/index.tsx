@@ -1,16 +1,29 @@
-import React from "react"
+import { useState, useEffect } from "react"
 import { TextField, FormControl } from "@mui/material"
 
 interface FormNumberInputProps {
-  value: number
+  value: string
   label: string
-  onChange: React.Dispatch<React.SetStateAction<number>>
+  onChange: React.Dispatch<React.SetStateAction<string>>
   required: boolean
 }
 
-// TODO: add number-only validation
-
 export function FormNumberInput(props: FormNumberInputProps) {
+  const [errorMessage, setErrorMessage] = useState<string>("")
+  const [isError, setIsError] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (!Number.isInteger(Number.parseFloat(props.value))) {
+      setErrorMessage("Please enter a number")
+      setIsError(true)
+    } else if (errorMessage !== "") {
+      setErrorMessage("")
+      if (isError) {
+        setIsError(false)
+      }
+    }
+  }, [props.value])
+
   return (
     <>
       <FormControl sx={{ m: 1, width: 104 }}>
@@ -19,8 +32,10 @@ export function FormNumberInput(props: FormNumberInputProps) {
           label={props.label}
           variant="outlined"
           value={props.value}
-          onChange={(e) => props.onChange(e.target.value as unknown as number)}
+          onChange={(e) => props.onChange(e.target.value)}
           required={props.required}
+          helperText={errorMessage}
+          error={isError}
         />
       </FormControl>
     </>

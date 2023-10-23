@@ -1,11 +1,11 @@
 export const constructNewManaCost = (manaCostObj: {
-  white: number
-  blue: number
-  black: number
-  red: number
-  green: number
-  colorless: number
-  any: number
+  white: string
+  blue: string
+  black: string
+  red: string
+  green: string
+  colorless: string
+  any: string
 }) => {
   const newManaCost = []
   for (const [key, value] of Object.entries(manaCostObj)) {

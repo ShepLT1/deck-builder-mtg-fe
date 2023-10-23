@@ -74,16 +74,16 @@ export function CardForm(props: CardFormProps) {
 
   const [newCardType, setNewCardType] = useState<cardType | "">("")
   const [newAbility, setNewAbility] = useState<string>("")
-  const [whiteMana, setWhiteMana] = useState<number>(0)
-  const [blueMana, setBlueMana] = useState<number>(0)
-  const [blackMana, setBlackMana] = useState<number>(0)
-  const [redMana, setRedMana] = useState<number>(0)
-  const [greenMana, setGreenMana] = useState<number>(0)
-  const [colorlessMana, setColorlessMana] = useState<number>(0)
-  const [anyMana, setAnyMana] = useState<number>(0)
+  const [whiteMana, setWhiteMana] = useState<string>("0")
+  const [blueMana, setBlueMana] = useState<string>("0")
+  const [blackMana, setBlackMana] = useState<string>("0")
+  const [redMana, setRedMana] = useState<string>("0")
+  const [greenMana, setGreenMana] = useState<string>("0")
+  const [colorlessMana, setColorlessMana] = useState<string>("0")
+  const [anyMana, setAnyMana] = useState<string>("0")
 
-  const [creaturePower, setCreaturePower] = useState<number>(0)
-  const [creatureToughness, setCreatureToughness] = useState<number>(0)
+  const [creaturePower, setCreaturePower] = useState<string>("0")
+  const [creatureToughness, setCreatureToughness] = useState<string>("0")
 
   const formManaArray = [
     { label: "White", value: whiteMana, onChange: setWhiteMana },
