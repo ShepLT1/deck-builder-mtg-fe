@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
 import { Button, Grid, TextField, Typography } from "@mui/material"
 import OutlinedInput from "@mui/material/OutlinedInput"
 import MenuItem from "@mui/material/MenuItem"
@@ -33,11 +33,15 @@ import {
   isLand,
   isSpell,
   isCreature,
+  Card,
   Land,
   Spell,
   Creature,
 } from "./cardSlice"
 import { FormNumberInput } from "../../components/formNumberInput"
+import { constructNewManaCost } from "./helpers"
+import { updateBaseModal } from "../baseModal/baseModalSlice"
+import { getCardsByPage, selectCurrentPage } from "../cards/cardsSlice"
 
 interface CardFormProps {
   id: number | null
@@ -46,11 +50,24 @@ interface CardFormProps {
 export function CardForm(props: CardFormProps) {
   const dispatch = useAppDispatch()
   const card = useAppSelector(selectCard)
+  const currentPage = useAppSelector(selectCurrentPage)
   const land = card as Land
   const spell = card as Spell
   const creature = card as Creature
 
   const colors = ["White", "Blue", "Black", "Red", "Green", "Colorless"]
+  const creatureAttributes = [
+    "Flying",
+    "First Strike",
+    "Trample",
+    "Haste",
+    "Deathtouch",
+    "Lifelink",
+    "Vigilance",
+    "Reach",
+    "Double Strike",
+    "Menace",
+  ]
   const spellTypes = ["Instant", "Sorcery", "Enchantment", "Artifact"]
   const cardTypes = ["Land", "Spell", "Creature"] as const
   type cardType = (typeof cardTypes)[number]
@@ -65,6 +82,9 @@ export function CardForm(props: CardFormProps) {
   const [colorlessMana, setColorlessMana] = useState<number>(0)
   const [anyMana, setAnyMana] = useState<number>(0)
 
+  const [creaturePower, setCreaturePower] = useState<number>(0)
+  const [creatureToughness, setCreatureToughness] = useState<number>(0)
+
   const formManaArray = [
     { label: "White", value: whiteMana, onChange: setWhiteMana },
     { label: "Blue", value: blueMana, onChange: setBlueMana },
@@ -75,13 +95,67 @@ export function CardForm(props: CardFormProps) {
     { label: "Any", value: anyMana, onChange: setAnyMana },
   ]
 
+  const formCreatureStatsArray = [
+    {
+      label: "Power",
+      value: creaturePower,
+      onChange: setCreaturePower,
+    },
+    {
+      label: "Toughness",
+      value: creatureToughness,
+      onChange: setCreatureToughness,
+    },
+  ]
+
+  useEffect(() => {
+    dispatch(
+      updateManaCost(
+        constructNewManaCost({
+          white: whiteMana,
+          blue: blueMana,
+          black: blackMana,
+          red: redMana,
+          green: greenMana,
+          colorless: colorlessMana,
+          any: anyMana,
+        }),
+      ),
+    )
+  }, [
+    whiteMana,
+    blueMana,
+    blackMana,
+    redMana,
+    greenMana,
+    colorlessMana,
+    anyMana,
+  ])
+
+  useEffect(() => {
+    dispatch(updatePower(creaturePower))
+  }, [creaturePower])
+
+  useEffect(() => {
+    dispatch(updateToughness(creatureToughness))
+  }, [creatureToughness])
+
   const handleNewCardSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    // TODO: dispatch create new card thunk
+    if (isLand(card)) {
+      await dispatch(createNewLand(card))
+    } else if (isCreature(card)) {
+      await dispatch(createNewCreature(card))
+    } else if (isSpell(card)) {
+      await dispatch(createNewSpell(card))
+    }
+    dispatch(updateBaseModal(false))
+    dispatch(getCardsByPage(currentPage))
   }
 
   const handleEditCardSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    // 1: if card type is spell or creature, assemble new mana cost array
     // TODO: dispatch edit card thunk
   }
 
@@ -105,7 +179,7 @@ export function CardForm(props: CardFormProps) {
           setNewCard({
             ...newCard,
             manaCost: [],
-            type: "",
+            type: "Creature",
             power: 0,
             toughness: 0,
             attributes: [],
@@ -136,6 +210,20 @@ export function CardForm(props: CardFormProps) {
     } = event
     dispatch(
       updateColors(
+        // On autofill we get a stringified value.
+        typeof value === "string" ? value.split(",") : value,
+      ),
+    )
+  }
+
+  const handleCreatureAttributeChange = (
+    event: SelectChangeEvent<typeof creature.attributes>,
+  ) => {
+    const {
+      target: { value },
+    } = event
+    dispatch(
+      updateAttributes(
         // On autofill we get a stringified value.
         typeof value === "string" ? value.split(",") : value,
       ),
@@ -224,7 +312,7 @@ export function CardForm(props: CardFormProps) {
               <FormControl sx={{ m: 1, width: 350 }}>
                 {card.abilities?.map((ability, i) => {
                   return (
-                    <ListItem key={i}>
+                    <ListItem key={i} sx={{ paddingTop: 0 }}>
                       <Chip
                         label={ability}
                         variant="outlined"
@@ -237,7 +325,14 @@ export function CardForm(props: CardFormProps) {
             </Grid>
             {isLand(card) ? (
               <Grid item xs={12}>
-                <FormControl sx={{ m: 1, width: 345 }}>
+                <FormControl
+                  sx={{
+                    marginBottom: 1,
+                    marginRight: 1,
+                    marginLeft: 1,
+                    width: 345,
+                  }}
+                >
                   <InputLabel id="land-colors-select-label">Colors</InputLabel>
                   <Select
                     labelId="land-colors-select-label"
@@ -260,22 +355,86 @@ export function CardForm(props: CardFormProps) {
                 </FormControl>
               </Grid>
             ) : isSpell(card) ? (
+              <Grid
+                item
+                xs={12}
+                justifyContent={"space-between"}
+                sx={{
+                  marginBottom: 1,
+                  marginRight: 1,
+                  marginLeft: 1,
+                  border: "1px solid rgba(61, 56, 48, 0.23)",
+                  borderRadius: "3px",
+                  padding: 2,
+                  width: 345,
+                }}
+              >
+                <Typography
+                  variant="body1"
+                  sx={{ paddingLeft: 1, paddingBottom: 2 }}
+                >
+                  Mana Cost
+                </Typography>
+                {formManaArray.map((inputProps) => {
+                  return (
+                    <FormNumberInput
+                      key={inputProps.label}
+                      {...inputProps}
+                      required={true}
+                    />
+                  )
+                })}
+              </Grid>
+            ) : (
+              <></>
+            )}
+            {isSpell(card) && !isCreature(card) ? (
+              <Grid item xs={12}>
+                <FormControl sx={{ m: 1, width: 345 }}>
+                  <InputLabel id="spell-type-select-label">
+                    Spell Type
+                  </InputLabel>
+                  <Select
+                    labelId="spell-type-select-label"
+                    id="spell-type-select"
+                    required
+                    value={card.type}
+                    onChange={handleSpellTypeChange}
+                  >
+                    {spellTypes.map((type) => (
+                      <MenuItem key={type} value={type}>
+                        {type}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            ) : (
+              <></>
+            )}
+            {isCreature(card) ? (
               <>
                 <Grid item xs={12}>
                   <FormControl sx={{ m: 1, width: 345 }}>
-                    <InputLabel id="spell-type-select-label">
-                      Spell Type
+                    <InputLabel id="creature-attributes-select-label">
+                      Attributes
                     </InputLabel>
                     <Select
-                      labelId="spell-type-select-label"
-                      id="spell-type-select"
-                      required
-                      value={card.type}
-                      onChange={handleSpellTypeChange}
+                      labelId="creature-attributes-select-label"
+                      id="creature-attributes-select"
+                      multiple
+                      value={card.attributes}
+                      onChange={handleCreatureAttributeChange}
+                      input={<OutlinedInput label="Attributes" />}
+                      renderValue={(selected) => selected.join(", ")}
+                      MenuProps={MenuProps}
                     >
-                      {spellTypes.map((type) => (
-                        <MenuItem key={type} value={type}>
-                          {type}
+                      {creatureAttributes.map((attr) => (
+                        <MenuItem key={attr} value={attr}>
+                          <Checkbox
+                            checked={card.attributes.indexOf(attr) > -1}
+                          />
+                          <ListItemText primary={attr} />
                         </MenuItem>
                       ))}
                     </Select>
@@ -287,13 +446,7 @@ export function CardForm(props: CardFormProps) {
                   justifyContent={"space-between"}
                   sx={{ marginTop: 1 }}
                 >
-                  <Typography
-                    variant="body1"
-                    sx={{ paddingLeft: 3, paddingBottom: 1 }}
-                  >
-                    Mana Cost
-                  </Typography>
-                  {formManaArray.map((inputProps) => {
+                  {formCreatureStatsArray.map((inputProps) => {
                     return (
                       <FormNumberInput
                         key={inputProps.label}
@@ -307,7 +460,12 @@ export function CardForm(props: CardFormProps) {
             ) : (
               <></>
             )}
-            <Grid container direction="row" justifyContent="center">
+            <Grid
+              container
+              direction="row"
+              justifyContent="center"
+              sx={{ marginTop: 3 }}
+            >
               <Button variant="contained" type="submit">
                 Submit
               </Button>
