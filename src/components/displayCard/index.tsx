@@ -64,7 +64,7 @@ export function DisplayCard(props: CardProps) {
       sx={{ minWidth: 275, maxWidth: 275, minHeight: 350, margin: 1 }}
       variant="outlined"
     >
-      <CardContent>
+      <CardContent sx={{ position: "relative", height: "calc(100% - 40px)" }}>
         <Grid container justifyContent="space-between">
           <Grid item xs={9}>
             <Typography variant="h6" textAlign={"start"} gutterBottom>
@@ -115,15 +115,25 @@ export function DisplayCard(props: CardProps) {
           <></>
         )}
         {props.card.abilities != null && props.card.abilities[0] != null ? (
-          <Typography textAlign={"start"}>
-            {props.card.abilities.join("/r/n")}
-            <br />
-          </Typography>
+          <>
+            {props.card.abilities.map((ability) => (
+              <Typography
+                textAlign={"start"}
+                key={ability}
+                sx={{ marginBottom: 2 }}
+              >
+                {ability}
+              </Typography>
+            ))}
+          </>
         ) : (
           <></>
         )}
         {isCreature(props.card) ? (
-          <Typography textAlign={"end"}>
+          <Typography
+            textAlign={"end"}
+            sx={{ position: "absolute", right: 16, bottom: 16 }}
+          >
             {props.card.power} / {props.card.toughness}
             <br />
           </Typography>
