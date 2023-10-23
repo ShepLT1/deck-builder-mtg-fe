@@ -19,6 +19,8 @@ import {
   addCardInstance,
   removeCardInstance,
 } from "../../features/deck/deckSlice"
+import { getCardById, deleteCard } from "../../features/card/cardSlice"
+import { updateBaseModal } from "../../features/baseModal/baseModalSlice"
 
 interface CardProps {
   card: Card
@@ -27,6 +29,13 @@ interface CardProps {
 
 export function DisplayCard(props: CardProps) {
   const dispatch = useAppDispatch()
+
+  const handleEditCard = async (card_id: number) => {
+    const response = await dispatch(getCardById(card_id))
+    if (response.meta.requestStatus === "fulfilled") {
+      dispatch(updateBaseModal(true))
+    }
+  }
 
   const deckCardOptionButtons = [
     <Button
@@ -48,14 +57,15 @@ export function DisplayCard(props: CardProps) {
   ]
 
   const cardOptionButtons = [
-    <Button key="add-one" onClick={() => {}}>
-      Update Me
+    <Button key="edit" onClick={() => handleEditCard(props.card.id)}>
+      Edit
     </Button>,
-    <Button key="rm-one" color="warning" onClick={() => {}}>
-      UpdateMe
-    </Button>,
-    <Button key="rm-all" color="error">
-      UpdateMe
+    <Button
+      key="delete"
+      color="error"
+      onClick={() => dispatch(deleteCard(props.card.id))}
+    >
+      Delete
     </Button>,
   ]
 
