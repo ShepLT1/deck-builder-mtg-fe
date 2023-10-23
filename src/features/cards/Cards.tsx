@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import { useAppSelector, useAppDispatch } from "../../app/hooks"
 import { selectCards, selectTotalPages, getCardsByPage } from "./cardsSlice"
 import { Grid, Pagination } from "@mui/material"
-import { getCardById } from "../card/cardSlice"
+import { setCard, Card } from "../card/cardSlice"
 import BaseModal from "../baseModal/BaseModal"
 import { CardForm } from "../card/CardForm"
 import { updateBaseModal } from "../baseModal/baseModalSlice"
@@ -25,12 +25,17 @@ export function Cards() {
     await dispatch(getCardsByPage(value - 1))
   }
 
+  const handleCreateNewCardClick = () => {
+    dispatch(setCard({ id: 0, name: "", abilities: [], count: 0 } as Card))
+    dispatch(updateBaseModal(true))
+  }
+
   return (
     <Grid container width="100%">
       <PageHeader
         title="Cards"
         buttonTitle="Create New Card"
-        buttonOnClick={() => dispatch(updateBaseModal(true))}
+        buttonOnClick={() => handleCreateNewCardClick()}
       />
       <Grid container spacing={0}>
         {cards.map((card) => {
@@ -44,7 +49,7 @@ export function Cards() {
           onChange={handlePageChange}
         />
       </Grid>
-      <BaseModal children={<CardForm id={null} />} />
+      <BaseModal children={<CardForm />} />
     </Grid>
   )
 }

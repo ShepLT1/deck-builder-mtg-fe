@@ -14,7 +14,6 @@ import ListItem from "@mui/material/ListItem"
 import { useAppSelector, useAppDispatch } from "../../app/hooks"
 import {
   selectCard,
-  setCard,
   setNewCard,
   updateName,
   updateAbilities,
@@ -27,13 +26,9 @@ import {
   createNewLand,
   createNewSpell,
   createNewCreature,
-  updateLand,
-  updateSpell,
-  updateCreature,
   isLand,
   isSpell,
   isCreature,
-  Card,
   Land,
   Spell,
   Creature,
@@ -43,11 +38,7 @@ import { constructNewManaCost } from "./helpers"
 import { updateBaseModal } from "../baseModal/baseModalSlice"
 import { getCardsByPage, selectCurrentPage } from "../cards/cardsSlice"
 
-interface CardFormProps {
-  id: number | null
-}
-
-export function CardForm(props: CardFormProps) {
+export function CardForm() {
   const dispatch = useAppDispatch()
   const card = useAppSelector(selectCard)
   const currentPage = useAppSelector(selectCurrentPage)
@@ -245,14 +236,12 @@ export function CardForm(props: CardFormProps) {
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Typography variant="h2" gutterBottom textAlign={"center"}>
-            {props.id ? "Edit" : "New"} Card
+            {card.id ? "Edit" : "New"} Card
           </Typography>
         </Grid>
         <Grid item xs={12}>
-          <form
-            onSubmit={props.id ? handleEditCardSubmit : handleNewCardSubmit}
-          >
-            {!props.id ? (
+          <form onSubmit={card.id ? handleEditCardSubmit : handleNewCardSubmit}>
+            {!card.id ? (
               <Grid item xs={12}>
                 <FormControl sx={{ m: 1, width: 345 }}>
                   <InputLabel id="card-type-select-label">Card Type</InputLabel>
@@ -323,7 +312,7 @@ export function CardForm(props: CardFormProps) {
                 })}
               </FormControl>
             </Grid>
-            {(props.id || (!props.id && newCardType !== "")) && isLand(card) ? (
+            {(card.id || (!card.id && newCardType !== "")) && isLand(card) ? (
               <Grid item xs={12}>
                 <FormControl
                   sx={{
@@ -354,7 +343,7 @@ export function CardForm(props: CardFormProps) {
                   </Select>
                 </FormControl>
               </Grid>
-            ) : (props.id || (!props.id && newCardType !== "")) &&
+            ) : (card.id || (!card.id && newCardType !== "")) &&
               isSpell(card) ? (
               <Grid
                 item
@@ -389,7 +378,7 @@ export function CardForm(props: CardFormProps) {
             ) : (
               <></>
             )}
-            {(props.id || (!props.id && newCardType !== "")) &&
+            {(card.id || (!card.id && newCardType !== "")) &&
             isSpell(card) &&
             !isCreature(card) ? (
               <Grid item xs={12}>
@@ -415,7 +404,7 @@ export function CardForm(props: CardFormProps) {
             ) : (
               <></>
             )}
-            {(props.id || (!props.id && newCardType !== "")) &&
+            {(card.id || (!card.id && newCardType !== "")) &&
             isCreature(card) ? (
               <>
                 <Grid item xs={12}>
