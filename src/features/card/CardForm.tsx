@@ -26,6 +26,9 @@ import {
   createNewLand,
   createNewSpell,
   createNewCreature,
+  updateLand,
+  updateSpell,
+  updateCreature,
   isLand,
   isSpell,
   isCreature,
@@ -34,7 +37,7 @@ import {
   Creature,
 } from "./cardSlice"
 import { FormNumberInput } from "../../components/formNumberInput"
-import { constructNewManaCost } from "./helpers"
+import { constructNewManaCost, deconstructManaCost } from "./helpers"
 import { updateBaseModal } from "../baseModal/baseModalSlice"
 import { getCardsByPage, selectCurrentPage } from "../cards/cardsSlice"
 
@@ -59,7 +62,7 @@ export function CardForm() {
     "Double Strike",
     "Menace",
   ]
-  const spellTypes = ["Instant", "Sorcery", "Enchantment", "Artifact"]
+  const spellTypes = ["INSTANT", "SORCERY", "ENCHANTMENT", "ARTIFACT"]
   const cardTypes = ["Land", "Spell", "Creature"] as const
   type cardType = (typeof cardTypes)[number]
 
@@ -131,6 +134,25 @@ export function CardForm() {
     dispatch(updateToughness(creatureToughness))
   }, [creatureToughness])
 
+  useEffect(() => {
+    if (card.id > 0) {
+      if (isCreature(card)) {
+        setCreaturePower(card.power.toString())
+        setCreatureToughness(card.toughness.toString())
+      }
+      if (isSpell(card)) {
+        const manaCostObj = deconstructManaCost(card.manaCost)
+        setWhiteMana(manaCostObj.white.toString())
+        setBlueMana(manaCostObj.blue.toString())
+        setBlackMana(manaCostObj.black.toString())
+        setRedMana(manaCostObj.red.toString())
+        setGreenMana(manaCostObj.green.toString())
+        setColorlessMana(manaCostObj.colorless.toString())
+        setAnyMana(manaCostObj.any.toString())
+      }
+    }
+  }, [card.id])
+
   const handleNewCardSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (isLand(card)) {
@@ -146,8 +168,15 @@ export function CardForm() {
 
   const handleEditCardSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    // 1: if card type is spell or creature, assemble new mana cost array
-    // TODO: dispatch edit card thunk
+    if (isLand(card)) {
+      await dispatch(updateLand(card))
+    } else if (isCreature(card)) {
+      await dispatch(updateCreature(card))
+    } else if (isSpell(card)) {
+      await dispatch(updateSpell(card))
+    }
+    dispatch(updateBaseModal(false))
+    dispatch(getCardsByPage(currentPage))
   }
 
   const handleNewCardTypeChange = (event: SelectChangeEvent) => {

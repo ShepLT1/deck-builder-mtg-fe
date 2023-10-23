@@ -111,7 +111,7 @@ export const updateLand = createAsyncThunk(
   "cards/updateLandStatus",
   async (land: Land) => {
     const response = await axios({
-      method: "post",
+      method: "put",
       url: `http://127.0.0.1:8080/cards/lands/${land.id}`,
       headers: {
         "Content-Type": "application/json",
@@ -127,7 +127,7 @@ export const updateSpell = createAsyncThunk(
   "cards/updateSpellStatus",
   async (spell: Spell) => {
     const response = await axios({
-      method: "post",
+      method: "put",
       url: `http://127.0.0.1:8080/cards/spells/${spell.id}`,
       headers: {
         "Content-Type": "application/json",
@@ -143,7 +143,7 @@ export const updateCreature = createAsyncThunk(
   "cards/updateCreatureStatus",
   async (creature: Creature) => {
     const response = await axios({
-      method: "post",
+      method: "put",
       url: `http://127.0.0.1:8080/cards/creatures/${creature.id}`,
       headers: {
         "Content-Type": "application/json",
@@ -316,6 +316,15 @@ export const cardSlice = createSlice({
         cardSlice.caseReducers.setCard(state, action)
       })
       .addCase(updateCreature.rejected, (state) => {
+        state.status = "failed"
+      })
+      .addCase(deleteCard.pending, (state) => {
+        state.status = "loading"
+      })
+      .addCase(deleteCard.fulfilled, (state) => {
+        state.status = "idle"
+      })
+      .addCase(deleteCard.rejected, (state) => {
         state.status = "failed"
       })
   },
