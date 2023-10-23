@@ -323,7 +323,7 @@ export function CardForm(props: CardFormProps) {
                 })}
               </FormControl>
             </Grid>
-            {isLand(card) ? (
+            {(props.id || (!props.id && newCardType !== "")) && isLand(card) ? (
               <Grid item xs={12}>
                 <FormControl
                   sx={{
@@ -354,7 +354,8 @@ export function CardForm(props: CardFormProps) {
                   </Select>
                 </FormControl>
               </Grid>
-            ) : isSpell(card) ? (
+            ) : (props.id || (!props.id && newCardType !== "")) &&
+              isSpell(card) ? (
               <Grid
                 item
                 xs={12}
@@ -388,7 +389,9 @@ export function CardForm(props: CardFormProps) {
             ) : (
               <></>
             )}
-            {isSpell(card) && !isCreature(card) ? (
+            {(props.id || (!props.id && newCardType !== "")) &&
+            isSpell(card) &&
+            !isCreature(card) ? (
               <Grid item xs={12}>
                 <FormControl sx={{ m: 1, width: 345 }}>
                   <InputLabel id="spell-type-select-label">
@@ -412,7 +415,8 @@ export function CardForm(props: CardFormProps) {
             ) : (
               <></>
             )}
-            {isCreature(card) ? (
+            {(props.id || (!props.id && newCardType !== "")) &&
+            isCreature(card) ? (
               <>
                 <Grid item xs={12}>
                   <FormControl sx={{ m: 1, width: 345 }}>
