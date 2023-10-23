@@ -13,8 +13,9 @@ export function FormNumberInput(props: FormNumberInputProps) {
   const [isError, setIsError] = useState<boolean>(false)
 
   useEffect(() => {
-    if (!Number.isInteger(Number.parseFloat(props.value))) {
-      setErrorMessage("Please enter a number")
+    const numVal = Number.parseFloat(props.value)
+    if (!Number.isInteger(numVal) || numVal < 0 || numVal % 1 !== 0) {
+      setErrorMessage("Please enter a positive integer")
       setIsError(true)
     } else if (errorMessage !== "") {
       setErrorMessage("")
