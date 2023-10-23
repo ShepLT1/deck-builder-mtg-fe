@@ -155,6 +155,21 @@ export const updateCreature = createAsyncThunk(
   },
 )
 
+export const deleteCard = createAsyncThunk(
+  "cards/deleteCardStatus",
+  async (card_id: number) => {
+    const response = await axios({
+      method: "delete",
+      url: `http://127.0.0.1:8080/cards/${card_id}`,
+      headers: {
+        "Content-Type": "application/json",
+        "X-API-KEY": "SuperSecretToken",
+      },
+    })
+    return response.data
+  },
+)
+
 export const cardSlice = createSlice({
   name: "card",
   initialState,
