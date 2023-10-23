@@ -14,13 +14,17 @@ import {
 } from "@mui/material"
 import "./style.css"
 import OptionPopover from "../cardOptionPopover"
-import { useAppDispatch } from "../../app/hooks"
+import { useAppSelector, useAppDispatch } from "../../app/hooks"
 import {
   addCardInstance,
   removeCardInstance,
 } from "../../features/deck/deckSlice"
 import { getCardById, deleteCard } from "../../features/card/cardSlice"
 import { updateBaseModal } from "../../features/baseModal/baseModalSlice"
+import {
+  getCardsByPage,
+  selectCurrentPage,
+} from "../../features/cards/cardsSlice"
 
 interface CardProps {
   card: Card
@@ -29,12 +33,18 @@ interface CardProps {
 
 export function DisplayCard(props: CardProps) {
   const dispatch = useAppDispatch()
+  const currentPage = useAppSelector(selectCurrentPage)
 
   const handleEditCard = async (card_id: number) => {
     const response = await dispatch(getCardById(card_id))
     if (response.meta.requestStatus === "fulfilled") {
       dispatch(updateBaseModal(true))
     }
+  }
+
+  const handleDeleteCard = async (card_id: number) => {
+    await dispatch(deleteCard(card_id))
+    dispatch(getCardsByPage(currentPage))
   }
 
   const deckCardOptionButtons = [
@@ -63,7 +73,7 @@ export function DisplayCard(props: CardProps) {
     <Button
       key="delete"
       color="error"
-      onClick={() => dispatch(deleteCard(props.card.id))}
+      onClick={() => handleDeleteCard(props.card.id)}
     >
       Delete
     </Button>,
