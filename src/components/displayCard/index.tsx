@@ -105,7 +105,7 @@ export function DisplayCard(props: CardProps) {
           )}
         </Grid>
         <hr />
-        {isCreature(props.card) ? (
+        {isCreature(props.card) && props.card.attributes[0] ? (
           <Typography variant="body2">
             {props.card.attributes.join(", ")}
             <br />
