@@ -9,11 +9,11 @@ export function DeckCardSection(props: CardSection) {
     <Grid container spacing={3}>
       <Grid item xs={12}>
         <h2>{props.title}</h2>
-        <div>
+        <Grid item xs={12} display="flex">
           {props.cards.map((card: Card) => {
             return <DeckCard key={card.id} card={card} page="deck" />
           })}
-        </div>
+        </Grid>
       </Grid>
     </Grid>
   )
