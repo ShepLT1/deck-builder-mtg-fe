@@ -8,6 +8,7 @@ import { CardForm } from "../card/CardForm"
 import { updateBaseModal } from "../baseModal/baseModalSlice"
 import { DisplayCard } from "../../components/displayCard"
 import { PageHeader } from "../../components/pageHeader"
+import Search from "../search/Search"
 
 export function Cards() {
   const cards = useAppSelector(selectCards)
@@ -37,7 +38,8 @@ export function Cards() {
         buttonTitle="Create New Card"
         buttonOnClick={() => handleCreateNewCardClick()}
       />
-      <Grid container spacing={0}>
+      <Search displayResults={false} onResultClick={null} />
+      <Grid container sx={{ margin: 5 }}>
         {cards.map((card) => {
           return <DisplayCard key={card.id} card={card} page="card" />
         })}
