@@ -29,6 +29,9 @@ export const alertSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addMatcher(isRejected, (state, action) => {
+      if (action.type.includes("CardsByNameContains")) {
+        return
+      }
       state.value = action.error.message || "Unable to complete request"
       state.isOpen = true
       state.isError = true
