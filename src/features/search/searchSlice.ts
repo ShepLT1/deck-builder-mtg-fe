@@ -41,6 +41,9 @@ export const searchSlice = createSlice({
     updateSearchResults: (state, action) => {
       state.value.results = action.payload.content
     },
+    resetSearchResults: (state) => {
+      state.value.results = []
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -53,6 +56,7 @@ export const searchSlice = createSlice({
       })
       .addCase(getCardsByNameContains.rejected, (state) => {
         state.status = "failed"
+        searchSlice.caseReducers.resetSearchResults(state)
       })
   },
 })
