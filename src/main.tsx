@@ -6,6 +6,8 @@ import { store } from "./app/store"
 import { Decks } from "./features/decks/Decks"
 import { Cards } from "./features/cards/Cards"
 import { Deck } from "./features/deck/Deck"
+import Login from "./features/user/Login"
+import Register from "./features/user/Register"
 import App from "./App"
 import "./index.css"
 
@@ -25,6 +27,14 @@ const router = createBrowserRouter([
       {
         path: "/decks/:id",
         element: <Deck />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
+      },
+      {
+        path: "/register",
+        element: <Register />,
       },
     ],
   },
