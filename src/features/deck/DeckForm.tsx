@@ -21,7 +21,6 @@ export function DeckForm() {
 
   const handleNewDeckSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    console.log({ name: newDeckName, colors: newDeckColors })
     const result = await dispatch(
       createNewDeck({ name: newDeckName, colors: newDeckColors }),
     )
