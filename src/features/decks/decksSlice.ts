@@ -14,11 +14,10 @@ const initialState: DecksState = {
 }
 
 export const getAllDecks = createAsyncThunk("decks/getAllDecks", async () => {
-  const response = await axios(`http://127.0.0.1:8080/decks`, {
-    headers: {
-      "Content-Type": "application/json",
-      "X-API-KEY": "SuperSecretToken",
-    },
+  const response = await axios({
+    method: "GET",
+    url: `https://127.0.0.1:8080/api/decks`,
+    withCredentials: true,
   })
   return response.data.content
 })

@@ -20,11 +20,10 @@ const initialState: CardsState = {
 export const getCardsByPage = createAsyncThunk(
   "cards/getCardByPageStatus",
   async (page: number) => {
-    const response = await axios(`http://127.0.0.1:8080/cards?page=${page}`, {
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": "SuperSecretToken",
-      },
+    const response = await axios({
+      method: "GET",
+      url: `https://127.0.0.1:8080/api/cards?page=${page}`,
+      withCredentials: true,
     })
     return response.data
   },

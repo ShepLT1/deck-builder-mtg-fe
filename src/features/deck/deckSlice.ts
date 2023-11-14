@@ -39,11 +39,10 @@ const initialState: DeckState = {
 export const getDeckById = createAsyncThunk(
   "decks/getDeckByIdStatus",
   async (deck_id: number) => {
-    const response = await axios(`http://127.0.0.1:8080/decks/${deck_id}`, {
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": "SuperSecretToken",
-      },
+    const response = await axios({
+      method: "GET",
+      url: `https://127.0.0.1:8080/api/decks/${deck_id}`,
+      withCredentials: true,
     })
     return response.data as RawDeck
   },
@@ -54,12 +53,9 @@ export const createNewDeck = createAsyncThunk(
   async (new_deck: NewDeck) => {
     const response = await axios({
       method: "post",
-      url: `http://127.0.0.1:8080/decks`,
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": "SuperSecretToken",
-      },
+      url: `https://127.0.0.1:8080/api/decks`,
       data: new_deck,
+      withCredentials: true,
     })
     return response.data as RawDeck
   },
@@ -71,14 +67,11 @@ export const updateDeckName = createAsyncThunk(
     const state = getState() as RootState
     const response = await axios({
       method: "patch",
-      url: `http://127.0.0.1:8080/decks/${state.deck.value.id}`,
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": "SuperSecretToken",
-      },
+      url: `https://127.0.0.1:8080/api/decks/${state.deck.value.id}`,
       data: {
         name: new_name,
       },
+      withCredentials: true,
     })
     return response.data as RawDeck
   },
@@ -90,14 +83,11 @@ export const removeCardInstance = createAsyncThunk(
     const state = getState() as RootState
     const response = await axios({
       method: "patch",
-      url: `http://127.0.0.1:8080/decks/${state.deck.value.id}/cards/${card_id}`,
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": "SuperSecretToken",
-      },
+      url: `https://127.0.0.1:8080/api/decks/${state.deck.value.id}/cards/${card_id}`,
       data: {
         action: "remove",
       },
+      withCredentials: true,
     })
     return response.data as RawDeck
   },
@@ -109,14 +99,11 @@ export const addCardInstance = createAsyncThunk(
     const state = getState() as RootState
     const response = await axios({
       method: "patch",
-      url: `http://127.0.0.1:8080/decks/${state.deck.value.id}/cards/${card_id}`,
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": "SuperSecretToken",
-      },
+      url: `https://127.0.0.1:8080/api/decks/${state.deck.value.id}/cards/${card_id}`,
       data: {
         action: "add",
       },
+      withCredentials: true,
     })
     return response.data as RawDeck
   },

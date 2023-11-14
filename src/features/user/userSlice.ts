@@ -11,7 +11,7 @@ interface UserRegistrationRequest {
   username: string
   password: string
   email: string
-  roles: ["user"]
+  roles: string[]
 }
 
 interface RefreshAccessTokenRequest {
@@ -25,25 +25,24 @@ interface User {
 
 export interface UserState {
   value: User
-  token: string
-  refresh: string
   status: "idle" | "loading" | "failed"
 }
 
 const initialState: UserState = {
   value: { id: 0, username: "" },
-  token: "",
-  refresh: "",
   status: "idle",
 }
 
 export const loginUser = createAsyncThunk(
   "users/userLoginStatus",
   async (payload: UserLoginRequest) => {
-    const response = await axios(`http://127.0.0.1:8080/api/auth/signin`, {
+    const response = await axios({
       method: "POST",
+      url: `https://127.0.0.1:8080/api/auth/signin`,
       data: payload,
+      withCredentials: true,
     })
+    console.log(response.headers)
     return response.data
   },
 )
@@ -51,9 +50,11 @@ export const loginUser = createAsyncThunk(
 export const registerUser = createAsyncThunk(
   "users/userRegistrationStatus",
   async (payload: UserRegistrationRequest) => {
-    const response = await axios(`http://127.0.0.1:8080/api/auth/signup`, {
+    const response = await axios({
       method: "POST",
+      url: `https://127.0.0.1:8080/api/auth/signup`,
       data: payload,
+      withCredentials: true,
     })
     return response.data
   },
@@ -62,13 +63,12 @@ export const registerUser = createAsyncThunk(
 export const refreshAccessToken = createAsyncThunk(
   "users/userRefreshAccessTokenStatus",
   async (payload: RefreshAccessTokenRequest) => {
-    const response = await axios(
-      `http://127.0.0.1:8080/api/auth/refreshtoken`,
-      {
-        method: "POST",
-        data: payload,
-      },
-    )
+    const response = await axios({
+      method: "POST",
+      url: `https://127.0.0.1:8080/api/auth/refreshtoken`,
+      data: payload,
+      withCredentials: true,
+    })
     return response.data
   },
 )
@@ -76,25 +76,22 @@ export const refreshAccessToken = createAsyncThunk(
 export const userSlice = createSlice({
   name: "user",
   initialState,
-  // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
     updateUser: (state, action) => {
       state.value.id = action.payload.id
       state.value.username = action.payload.username
+      console.log(state.value)
     },
-    updateTokens: (state, action) => {
-      state.token = action.payload.token
-      if (action.payload.refresh && action.payload.refresh !== state.refresh) {
-        state.refresh = action.payload.refresh
-      }
-    },
+    // updateTokens: (state, action) => {
+    //   state.token = action.payload.token
+    //   if (action.payload.refresh && action.payload.refresh !== state.refresh) {
+    //     state.refresh = action.payload.refresh
+    //   }
+    //   console.log(state.token)
+    //   console.log(state.refresh)
+    // },
   },
   extraReducers: (builder) => {
-    builder.addMatcher(isRejected, (state, action) => {
-      console.log(action.error)
-      // TODO: if refresh token expired, log out (reset to initial state) and redirect to login page
-      // TODO: else if access token expired, refresh access token & retry request
-    })
     builder
       .addCase(loginUser.pending, (state) => {
         state.status = "loading"
@@ -102,7 +99,7 @@ export const userSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.status = "idle"
         userSlice.caseReducers.updateUser(state, action)
-        userSlice.caseReducers.updateTokens(state, action)
+        // userSlice.caseReducers.updateTokens(state, action)
       })
       .addCase(loginUser.rejected, (state) => {
         state.status = "failed"
@@ -121,22 +118,21 @@ export const userSlice = createSlice({
       })
       .addCase(refreshAccessToken.fulfilled, (state, action) => {
         state.status = "idle"
-        userSlice.caseReducers.updateTokens(state, action)
+        // userSlice.caseReducers.updateTokens(state, action)
       })
       .addCase(refreshAccessToken.rejected, (state) => {
         state.status = "failed"
       })
+      .addMatcher(isRejected, (state, action) => {
+        console.log(action.error)
+        // TODO: if refresh token expired, log out (reset to initial state)
+        // TODO: else if access token expired, refresh access token & retry request
+      })
   },
 })
 
-export const { updateUser, updateTokens } = userSlice.actions
+export const { updateUser } = userSlice.actions
 
-// The function below is called a selector and allows us to select a value from
-// the state. Selectors can also be defined inline where they're used instead of
-// in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
 export const selectUser = (state: RootState) => state.user
-
-// We can also write thunks by hand, which may contain both sync and async logic.
-// Here's an example of conditionally dispatching actions based on current state.
 
 export default userSlice.reducer

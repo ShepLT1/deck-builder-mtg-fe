@@ -49,11 +49,10 @@ const initialState: CardState = {
 export const getCardById = createAsyncThunk(
   "cards/getCardByIdStatus",
   async (card_id: number) => {
-    const response = await axios(`http://127.0.0.1:8080/cards/${card_id}`, {
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": "SuperSecretToken",
-      },
+    const response = await axios({
+      method: "GET",
+      url: `https://127.0.0.1:8080/api/cards/${card_id}`,
+      withCredentials: true,
     })
     return response.data
   },
@@ -64,12 +63,9 @@ export const createNewLand = createAsyncThunk(
   async (land: Land) => {
     const response = await axios({
       method: "post",
-      url: `http://127.0.0.1:8080/cards/lands`,
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": "SuperSecretToken",
-      },
+      url: `https://127.0.0.1:8080/api/cards/lands`,
       data: land,
+      withCredentials: true,
     })
     return response.data
   },
@@ -80,12 +76,9 @@ export const createNewSpell = createAsyncThunk(
   async (spell: Spell) => {
     const response = await axios({
       method: "post",
-      url: `http://127.0.0.1:8080/cards/spells`,
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": "SuperSecretToken",
-      },
+      url: `https://127.0.0.1:8080/api/cards/spells`,
       data: spell,
+      withCredentials: true,
     })
     return response.data
   },
@@ -96,12 +89,9 @@ export const createNewCreature = createAsyncThunk(
   async (creature: Creature) => {
     const response = await axios({
       method: "post",
-      url: `http://127.0.0.1:8080/cards/creatures`,
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": "SuperSecretToken",
-      },
+      url: `https://127.0.0.1:8080/api/cards/creatures`,
       data: creature,
+      withCredentials: true,
     })
     return response.data
   },
@@ -112,12 +102,9 @@ export const updateLand = createAsyncThunk(
   async (land: Land) => {
     const response = await axios({
       method: "put",
-      url: `http://127.0.0.1:8080/cards/lands/${land.id}`,
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": "SuperSecretToken",
-      },
+      url: `https://127.0.0.1:8080/api/cards/lands/${land.id}`,
       data: land,
+      withCredentials: true,
     })
     return response.data
   },
@@ -128,12 +115,9 @@ export const updateSpell = createAsyncThunk(
   async (spell: Spell) => {
     const response = await axios({
       method: "put",
-      url: `http://127.0.0.1:8080/cards/spells/${spell.id}`,
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": "SuperSecretToken",
-      },
+      url: `https://127.0.0.1:8080/api/cards/spells/${spell.id}`,
       data: spell,
+      withCredentials: true,
     })
     return response.data
   },
@@ -144,12 +128,9 @@ export const updateCreature = createAsyncThunk(
   async (creature: Creature) => {
     const response = await axios({
       method: "put",
-      url: `http://127.0.0.1:8080/cards/creatures/${creature.id}`,
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": "SuperSecretToken",
-      },
+      url: `https://127.0.0.1:8080/api/cards/creatures/${creature.id}`,
       data: creature,
+      withCredentials: true,
     })
     return response.data
   },
@@ -160,11 +141,8 @@ export const deleteCard = createAsyncThunk(
   async (card_id: number) => {
     const response = await axios({
       method: "delete",
-      url: `http://127.0.0.1:8080/cards/${card_id}`,
-      headers: {
-        "Content-Type": "application/json",
-        "X-API-KEY": "SuperSecretToken",
-      },
+      url: `https://127.0.0.1:8080/api/cards/${card_id}`,
+      withCredentials: true,
     })
     return response.data
   },
