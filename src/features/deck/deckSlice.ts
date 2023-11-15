@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { RootState } from "../../app/store"
 import { Card } from "../card/cardSlice"
 import { convertCardList } from "./helpers"
-import axios from "axios"
+import { instance } from "../../utils/api/axios.config"
 
 export interface NewDeck {
   name: string
@@ -39,10 +39,9 @@ const initialState: DeckState = {
 export const getDeckById = createAsyncThunk(
   "decks/getDeckByIdStatus",
   async (deck_id: number) => {
-    const response = await axios({
+    const response = await instance({
       method: "GET",
-      url: `https://127.0.0.1:8080/api/decks/${deck_id}`,
-      withCredentials: true,
+      url: `/decks/${deck_id}`,
     })
     return response.data as RawDeck
   },
@@ -51,11 +50,10 @@ export const getDeckById = createAsyncThunk(
 export const createNewDeck = createAsyncThunk(
   "decks/createNewDeck",
   async (new_deck: NewDeck) => {
-    const response = await axios({
+    const response = await instance({
       method: "post",
-      url: `https://127.0.0.1:8080/api/decks`,
+      url: `/decks`,
       data: new_deck,
-      withCredentials: true,
     })
     return response.data as RawDeck
   },
@@ -65,13 +63,12 @@ export const updateDeckName = createAsyncThunk(
   "decks/updateDeckName",
   async (new_name: string, { getState }) => {
     const state = getState() as RootState
-    const response = await axios({
+    const response = await instance({
       method: "patch",
-      url: `https://127.0.0.1:8080/api/decks/${state.deck.value.id}`,
+      url: `/decks/${state.deck.value.id}`,
       data: {
         name: new_name,
       },
-      withCredentials: true,
     })
     return response.data as RawDeck
   },
@@ -81,13 +78,12 @@ export const removeCardInstance = createAsyncThunk(
   "decks/removeCardInstance",
   async (card_id: number, { getState }) => {
     const state = getState() as RootState
-    const response = await axios({
+    const response = await instance({
       method: "patch",
-      url: `https://127.0.0.1:8080/api/decks/${state.deck.value.id}/cards/${card_id}`,
+      url: `/decks/${state.deck.value.id}/cards/${card_id}`,
       data: {
         action: "remove",
       },
-      withCredentials: true,
     })
     return response.data as RawDeck
   },
@@ -97,13 +93,12 @@ export const addCardInstance = createAsyncThunk(
   "decks/addCardInstance",
   async (card_id: number, { getState }) => {
     const state = getState() as RootState
-    const response = await axios({
+    const response = await instance({
       method: "patch",
-      url: `https://127.0.0.1:8080/api/decks/${state.deck.value.id}/cards/${card_id}`,
+      url: `/decks/${state.deck.value.id}/cards/${card_id}`,
       data: {
         action: "add",
       },
-      withCredentials: true,
     })
     return response.data as RawDeck
   },

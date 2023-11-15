@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import { RootState } from "../../app/store"
 import { Card } from "../card/cardSlice"
-import axios from "axios"
+import { instance } from "../../utils/api/axios.config"
 
 interface SearchValue {
   input: string
@@ -21,10 +21,9 @@ const initialState: SearchState = {
 export const getCardsByNameContains = createAsyncThunk(
   "cards/getCardsByNameContainsStatus",
   async (name: string) => {
-    const response = await axios({
+    const response = await instance({
       method: "GET",
-      url: `https://127.0.0.1:8080/api/api/cards?name=${name}`,
-      withCredentials: true,
+      url: `/cards?name=${name}`,
     })
     return response.data
   },

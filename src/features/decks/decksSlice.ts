@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { RootState } from "../../app/store"
 import { Deck } from "../deck/deckSlice"
-import axios from "axios"
+import { instance } from "../../utils/api/axios.config"
 
 export interface DecksState {
   value: Deck[]
@@ -14,10 +14,9 @@ const initialState: DecksState = {
 }
 
 export const getAllDecks = createAsyncThunk("decks/getAllDecks", async () => {
-  const response = await axios({
+  const response = await instance({
     method: "GET",
-    url: `https://127.0.0.1:8080/api/decks`,
-    withCredentials: true,
+    url: `/decks`,
   })
   return response.data.content
 })

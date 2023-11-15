@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { RootState } from "../../app/store"
-import axios from "axios"
+import { instance } from "../../utils/api/axios.config"
 import { Card } from "../card/cardSlice"
 
 export interface CardsState {
@@ -20,10 +20,9 @@ const initialState: CardsState = {
 export const getCardsByPage = createAsyncThunk(
   "cards/getCardByPageStatus",
   async (page: number) => {
-    const response = await axios({
+    const response = await instance({
       method: "GET",
-      url: `https://127.0.0.1:8080/api/cards?page=${page}`,
-      withCredentials: true,
+      url: `/cards?page=${page}`,
     })
     return response.data
   },

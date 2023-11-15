@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { RootState } from "../../app/store"
-import axios from "axios"
+import { instance } from "../../utils/api/axios.config"
 
 export interface Card {
   id: number
@@ -49,10 +49,9 @@ const initialState: CardState = {
 export const getCardById = createAsyncThunk(
   "cards/getCardByIdStatus",
   async (card_id: number) => {
-    const response = await axios({
+    const response = await instance({
       method: "GET",
-      url: `https://127.0.0.1:8080/api/cards/${card_id}`,
-      withCredentials: true,
+      url: `/cards/${card_id}`,
     })
     return response.data
   },
@@ -61,11 +60,10 @@ export const getCardById = createAsyncThunk(
 export const createNewLand = createAsyncThunk(
   "cards/createNewLandStatus",
   async (land: Land) => {
-    const response = await axios({
+    const response = await instance({
       method: "post",
-      url: `https://127.0.0.1:8080/api/cards/lands`,
+      url: `/cards/lands`,
       data: land,
-      withCredentials: true,
     })
     return response.data
   },
@@ -74,11 +72,10 @@ export const createNewLand = createAsyncThunk(
 export const createNewSpell = createAsyncThunk(
   "cards/createNewSpellStatus",
   async (spell: Spell) => {
-    const response = await axios({
+    const response = await instance({
       method: "post",
-      url: `https://127.0.0.1:8080/api/cards/spells`,
+      url: `/cards/spells`,
       data: spell,
-      withCredentials: true,
     })
     return response.data
   },
@@ -87,11 +84,10 @@ export const createNewSpell = createAsyncThunk(
 export const createNewCreature = createAsyncThunk(
   "cards/createNewCreatureStatus",
   async (creature: Creature) => {
-    const response = await axios({
+    const response = await instance({
       method: "post",
-      url: `https://127.0.0.1:8080/api/cards/creatures`,
+      url: `/cards/creatures`,
       data: creature,
-      withCredentials: true,
     })
     return response.data
   },
@@ -100,11 +96,10 @@ export const createNewCreature = createAsyncThunk(
 export const updateLand = createAsyncThunk(
   "cards/updateLandStatus",
   async (land: Land) => {
-    const response = await axios({
+    const response = await instance({
       method: "put",
-      url: `https://127.0.0.1:8080/api/cards/lands/${land.id}`,
+      url: `/cards/lands/${land.id}`,
       data: land,
-      withCredentials: true,
     })
     return response.data
   },
@@ -113,11 +108,10 @@ export const updateLand = createAsyncThunk(
 export const updateSpell = createAsyncThunk(
   "cards/updateSpellStatus",
   async (spell: Spell) => {
-    const response = await axios({
+    const response = await instance({
       method: "put",
-      url: `https://127.0.0.1:8080/api/cards/spells/${spell.id}`,
+      url: `/cards/spells/${spell.id}`,
       data: spell,
-      withCredentials: true,
     })
     return response.data
   },
@@ -126,11 +120,10 @@ export const updateSpell = createAsyncThunk(
 export const updateCreature = createAsyncThunk(
   "cards/updateCreatureStatus",
   async (creature: Creature) => {
-    const response = await axios({
+    const response = await instance({
       method: "put",
-      url: `https://127.0.0.1:8080/api/cards/creatures/${creature.id}`,
+      url: `/cards/creatures/${creature.id}`,
       data: creature,
-      withCredentials: true,
     })
     return response.data
   },
@@ -139,10 +132,9 @@ export const updateCreature = createAsyncThunk(
 export const deleteCard = createAsyncThunk(
   "cards/deleteCardStatus",
   async (card_id: number) => {
-    const response = await axios({
+    const response = await instance({
       method: "delete",
-      url: `https://127.0.0.1:8080/api/cards/${card_id}`,
-      withCredentials: true,
+      url: `/cards/${card_id}`,
     })
     return response.data
   },

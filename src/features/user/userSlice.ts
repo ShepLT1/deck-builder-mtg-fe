@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, isRejected } from "@reduxjs/toolkit"
 import { RootState } from "../../app/store"
-import axios from "axios"
+import { instance } from "../../utils/api/axios.config"
 
 interface UserLoginRequest {
   username: string
@@ -36,11 +36,10 @@ const initialState: UserState = {
 export const loginUser = createAsyncThunk(
   "users/userLoginStatus",
   async (payload: UserLoginRequest) => {
-    const response = await axios({
+    const response = await instance({
       method: "POST",
-      url: `https://127.0.0.1:8080/api/auth/signin`,
+      url: `/auth/signin`,
       data: payload,
-      withCredentials: true,
     })
     console.log(response.headers)
     return response.data
@@ -50,11 +49,10 @@ export const loginUser = createAsyncThunk(
 export const registerUser = createAsyncThunk(
   "users/userRegistrationStatus",
   async (payload: UserRegistrationRequest) => {
-    const response = await axios({
+    const response = await instance({
       method: "POST",
-      url: `https://127.0.0.1:8080/api/auth/signup`,
+      url: `/auth/signup`,
       data: payload,
-      withCredentials: true,
     })
     return response.data
   },
@@ -62,13 +60,12 @@ export const registerUser = createAsyncThunk(
 
 export const refreshAccessToken = createAsyncThunk(
   "users/userRefreshAccessTokenStatus",
-  async (payload: RefreshAccessTokenRequest) => {
-    const response = await axios({
+  async () => {
+    const response = await instance({
       method: "POST",
-      url: `https://127.0.0.1:8080/api/auth/refreshtoken`,
-      data: payload,
-      withCredentials: true,
+      url: `/auth/refreshtoken`,
     })
+    console.log(response)
     return response.data
   },
 )
@@ -123,11 +120,18 @@ export const userSlice = createSlice({
       .addCase(refreshAccessToken.rejected, (state) => {
         state.status = "failed"
       })
-      .addMatcher(isRejected, (state, action) => {
-        console.log(action.error)
-        // TODO: if refresh token expired, log out (reset to initial state)
-        // TODO: else if access token expired, refresh access token & retry request
-      })
+    // .addMatcher(isRejected, (state, action) => {
+    //   if (action.error.message === "Request failed with status code 401") {
+    //     try {
+    //       console.log("refreshing access token")
+    //       refreshAccessToken()
+    //     } catch (error) {
+    //       console.log("refresh error ==>> ", error)
+    //     }
+    //   }
+    //   // TODO: if refresh token expired, log out (reset to initial state)
+    //   // TODO: else if access token expired, refresh access token & retry request
+    // })
   },
 })
 
