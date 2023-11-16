@@ -1,7 +1,6 @@
-import { createSlice, createAsyncThunk, isRejected } from "@reduxjs/toolkit"
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import { RootState } from "../../app/store"
 import { instance } from "../../utils/api/axios.config"
-import { setLocalStorageLoggedIn } from "../../utils/persistance/localStorage"
 
 interface UserLoginRequest {
   username: string
@@ -15,22 +14,13 @@ interface UserRegistrationRequest {
   roles: string[]
 }
 
-interface RefreshAccessTokenRequest {
-  refreshToken: string
-}
-
-interface User {
-  id: number
-  username: string
-}
-
 export interface UserState {
-  value: User
+  value: Number
   status: "idle" | "loading" | "failed"
 }
 
 const initialState: UserState = {
-  value: { id: 0, username: "" },
+  value: 0,
   status: "idle",
 }
 
@@ -72,9 +62,7 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     updateUser: (state, action) => {
-      state.value.id = action.payload.id
-      state.value.username = action.payload.username
-      console.log(state.value)
+      state.value = action.payload
     },
   },
   extraReducers: (builder) => {
@@ -85,7 +73,6 @@ export const userSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.status = "idle"
         userSlice.caseReducers.updateUser(state, action)
-        setLocalStorageLoggedIn("true")
       })
       .addCase(loginUser.rejected, (state) => {
         state.status = "failed"
@@ -94,7 +81,6 @@ export const userSlice = createSlice({
         state.status = "loading"
       })
       .addCase(registerUser.fulfilled, (state) => {
-        setLocalStorageLoggedIn("true")
         state.status = "idle"
       })
       .addCase(registerUser.rejected, (state) => {

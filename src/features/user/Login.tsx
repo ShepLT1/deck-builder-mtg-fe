@@ -2,7 +2,8 @@ import { useState, FormEvent } from "react"
 import { useAppDispatch } from "../../app/hooks"
 import { useNavigate } from "react-router-dom"
 import { Grid, Typography, Button, TextField, FormControl } from "@mui/material"
-import { updateUser, loginUser } from "./userSlice"
+import { loginUser } from "./userSlice"
+import { setLocalStorageUserId } from "../../utils/persistance/localStorage"
 
 export default function Login() {
   const dispatch = useAppDispatch()
@@ -20,7 +21,7 @@ export default function Login() {
       }),
     )
     if (loginRes.meta.requestStatus === "fulfilled") {
-      dispatch(updateUser(loginRes.payload))
+      setLocalStorageUserId(loginRes.payload.id)
       navigate(`/`)
     }
   }

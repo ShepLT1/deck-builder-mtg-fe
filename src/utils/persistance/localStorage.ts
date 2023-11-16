@@ -1,4 +1,4 @@
-export const setLocalStorageLoggedIn = (val: string) => {
-  window.localStorage.setItem("loggedIn", val)
-  window.dispatchEvent(new Event("localStorageLoggedIn"))
+export const setLocalStorageUserId = (val: number) => {
+  window.localStorage.setItem("user", String(val))
+  window.dispatchEvent(new Event("localStorageUserId"))
 }

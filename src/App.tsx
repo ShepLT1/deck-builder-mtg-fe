@@ -1,20 +1,27 @@
-import { useState } from "react"
+import { useEffect } from "react"
+import { useAppDispatch, useAppSelector } from "./app/hooks"
 import AlertBar from "./features/alert/Alert"
 import { Outlet, Navigate } from "react-router-dom"
 import NavBar from "./components/navBar"
+import { selectUser, updateUser } from "./features/user/userSlice"
+import { setLocalStorageUserId } from "./utils/persistance/localStorage"
 import "./App.css"
 
-const loggedInVal = () => String(localStorage.getItem("loggedIn")) || "false"
-
 function App() {
-  const [loggedIn, setLoggedIn] = useState(loggedInVal())
-  window.addEventListener("localStorageLoggedIn", () => {
-    setLoggedIn(window.localStorage.getItem("loggedIn") || "false")
+  const dispatch = useAppDispatch()
+  const user = useAppSelector(selectUser)
+
+  useEffect(() => {
+    dispatch(updateUser(Number(window.localStorage.getItem("user"))))
+  }, [])
+
+  window.addEventListener("localStorageUserId", () => {
+    dispatch(updateUser(Number(window.localStorage.getItem("user")) || 0))
   })
 
   return (
     <div className="App">
-      {loggedIn === "true" ? (
+      {user.value !== 0 ? (
         <div>
           <header className="App-header">
             <NavBar />

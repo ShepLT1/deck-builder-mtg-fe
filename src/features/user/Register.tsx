@@ -2,7 +2,8 @@ import { useState, FormEvent } from "react"
 import { useAppDispatch } from "../../app/hooks"
 import { useNavigate } from "react-router-dom"
 import { Grid, Typography, Button, TextField, FormControl } from "@mui/material"
-import { updateUser, registerUser, loginUser } from "./userSlice"
+import { registerUser, loginUser } from "./userSlice"
+import { setLocalStorageUserId } from "../../utils/persistance/localStorage"
 
 export default function Register() {
   const dispatch = useAppDispatch()
@@ -28,7 +29,7 @@ export default function Register() {
         loginUser({ username: newUsername, password: newPassword }),
       )
       if (loginRes.meta.requestStatus === "fulfilled") {
-        dispatch(updateUser(loginRes.payload))
+        setLocalStorageUserId(loginRes.payload.id)
         navigate(`/`)
       }
     }
