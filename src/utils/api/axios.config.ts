@@ -1,5 +1,6 @@
 import axios from "axios"
-import { refreshAccessToken } from "./API"
+import { refreshAccessToken } from "../../features/user/userSlice"
+import { setLocalStorageLoggedIn } from "../persistance/localStorage"
 
 export const instance = axios.create({
   baseURL: "https://127.0.0.1:8080/api",
@@ -16,11 +17,11 @@ instance.interceptors.response.use(
       if (error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true
         try {
-          console.log("Refreshing access token...")
           await refreshAccessToken()
-          console.log("Access token refreshed.")
+          setLocalStorageLoggedIn("true")
           return instance(originalRequest)
         } catch (err: any) {
+          setLocalStorageLoggedIn("false")
           if (axios.isAxiosError(err)) {
             if (err.response && err.response.data) {
               return Promise.reject(err.response.data)
@@ -31,8 +32,11 @@ instance.interceptors.response.use(
           return Promise.reject(err)
         }
       }
-      if (error.response.status === 403 && error.response.data) {
-        return Promise.reject(error.response.data)
+      if (error.response.status === 403) {
+        setLocalStorageLoggedIn("false")
+        if (error.response.data) {
+          return Promise.reject(error.response.data)
+        }
       }
     }
     return Promise.reject(error)

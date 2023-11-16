@@ -1,8 +1,8 @@
 import { useState, FormEvent } from "react"
-import { useAppSelector, useAppDispatch } from "../../app/hooks"
+import { useAppDispatch } from "../../app/hooks"
 import { useNavigate } from "react-router-dom"
 import { Grid, Typography, Button, TextField, FormControl } from "@mui/material"
-import { selectUser, updateUser, registerUser, loginUser } from "./userSlice"
+import { updateUser, registerUser, loginUser } from "./userSlice"
 
 export default function Register() {
   const dispatch = useAppDispatch()
@@ -29,7 +29,6 @@ export default function Register() {
       )
       if (loginRes.meta.requestStatus === "fulfilled") {
         dispatch(updateUser(loginRes.payload))
-        // dispatch(updateTokens(loginRes.payload))
         navigate(`/`)
       }
     }
