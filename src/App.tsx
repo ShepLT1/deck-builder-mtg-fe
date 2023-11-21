@@ -4,7 +4,6 @@ import AlertBar from "./features/alert/Alert"
 import { Outlet, Navigate } from "react-router-dom"
 import NavBar from "./components/navBar"
 import { selectUser, updateUser } from "./features/user/userSlice"
-import { setLocalStorageUserId } from "./utils/persistance/localStorage"
 import "./App.css"
 
 function App() {
@@ -21,13 +20,14 @@ function App() {
 
   return (
     <div className="App">
-      {user.value !== 0 ? (
+      {user.value ? (
         <div>
           <header className="App-header">
             <NavBar />
             <AlertBar />
           </header>
           <Outlet />
+          {window.location.pathname === "/login" ? <Navigate to="/" /> : <></>}
         </div>
       ) : (
         <div>
