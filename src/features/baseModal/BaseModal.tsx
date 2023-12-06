@@ -20,10 +20,6 @@ interface Props {
   children: React.ReactNode
 }
 
-// 1. Edit Card.tsx to be of type form that will get rendered into Form feature if case matches
-//    - CardForm will display and have actions based on create vs update case
-// 2. If formState.feature = deck, render a simpl create deck form within Form feature and dispatch createDeck action on submit
-
 export default function BaseModal(props: Props) {
   const baseModal = useAppSelector(selectBaseModal)
   const dispatch = useAppDispatch()

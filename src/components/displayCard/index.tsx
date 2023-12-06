@@ -161,9 +161,6 @@ export function DisplayCard(props: CardProps) {
           <></>
         )}
       </CardContent>
-      {/* <CardActions>
-        <Button size="small">Options</Button>
-      </CardActions> */}
     </BasicCard>
   )
 }

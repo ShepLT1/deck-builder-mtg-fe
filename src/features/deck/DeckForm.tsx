@@ -37,10 +37,7 @@ export function DeckForm() {
     const {
       target: { value },
     } = event
-    setNewDeckColors(
-      // On autofill we get a stringified value.
-      typeof value === "string" ? value.split(",") : value,
-    )
+    setNewDeckColors(typeof value === "string" ? value.split(",") : value)
   }
 
   const ITEM_HEIGHT = 48
