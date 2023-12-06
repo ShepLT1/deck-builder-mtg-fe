@@ -2,8 +2,10 @@ import axios from "axios"
 import { refreshAccessToken } from "../../features/user/userSlice"
 import { setLocalStorageUserId } from "../persistance/localStorage"
 
+const { VITE_API_URL } = import.meta.env
+
 export const instance = axios.create({
-  baseURL: "https://127.0.0.1:8080/api",
+  baseURL: VITE_API_URL,
   withCredentials: true,
 })
 
