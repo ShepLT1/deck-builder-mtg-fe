@@ -1,4 +1,6 @@
 import axios from "axios"
+import { store } from "../../app/store"
+import { updateAlert } from "../../features/alert/alertSlice"
 import { refreshAccessToken } from "../../features/user/userSlice"
 import { setLocalStorageUserId } from "../persistance/localStorage"
 
@@ -16,7 +18,18 @@ instance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config
     if (error.response) {
-      if (error.response.status === 401 && !originalRequest._retry) {
+      if (
+        originalRequest.url?.includes("/auth") &&
+        (error.response.status === 401 || error.response.status === 400)
+      ) {
+        store.dispatch(
+          updateAlert({
+            message: error.response.data.message,
+            isOpen: true,
+            isError: true,
+          }),
+        )
+      } else if (error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true
         try {
           await refreshAccessToken()

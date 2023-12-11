@@ -28,8 +28,11 @@ export const alertSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addMatcher(isRejected, (state, action) => {
-      // TODO: create Set of actions and Set of errors that should not trigger alert
-      if (action.type.includes("CardsByNameContains")) {
+      if (
+        action.type.includes("CardsByNameContains") ||
+        action.type.includes("userLogin") ||
+        action.type.includes("userRegistration")
+      ) {
         return
       }
       state.value = action.error.message || "Unable to complete request"
