@@ -32,6 +32,7 @@ function App() {
       ) : (
         <div>
           <Navigate to="/login" />
+          <AlertBar />
           <Outlet />
         </div>
       )}
