@@ -52,6 +52,8 @@ export default function Register() {
                 variant="outlined"
                 value={newUsername}
                 onChange={(e) => setNewUsername(e.target.value)}
+                error={newUsername.length > 20}
+                helperText="20 character max"
                 required
               />
             </FormControl>
@@ -65,6 +67,8 @@ export default function Register() {
                 type="email"
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
+                error={newEmail.length > 40}
+                helperText="40 character max"
                 required
               />
             </FormControl>
