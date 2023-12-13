@@ -43,7 +43,7 @@ export default function Search(props: SearchProps) {
         return
       }
       setAnchorEl(anchorEl ? null : document.getElementById("search-input"))
-    }, 1000)
+    }, 500)
 
     return () => clearTimeout(delayDebounceFn)
   }, [search.input])
