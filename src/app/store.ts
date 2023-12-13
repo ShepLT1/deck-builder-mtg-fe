@@ -7,6 +7,7 @@ import baseModalReducer from "../features/baseModal/baseModalSlice"
 import cardsReducer from "../features/cards/cardsSlice"
 import searchReducer from "../features/search/searchSlice"
 import userReducer from "../features/user/userSlice"
+import loadingIndicatorReducer from "../features/loadingIndicator/loadingIndicatorSlice"
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     cards: cardsReducer,
     search: searchReducer,
     user: userReducer,
+    loadingIndicator: loadingIndicatorReducer,
   },
 })
 
