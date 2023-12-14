@@ -31,9 +31,7 @@ export const loadingIndicatorSlice = createSlice({
         state.value = false
       })
       .addMatcher(isFulfilled, (state) => {
-        setTimeout(() => {
-          state.value = false
-        }, 1500)
+        state.value = false
       })
   },
 })
