@@ -20,14 +20,13 @@ function App() {
 
   return (
     <div className="App">
-      {user.value ? (
+      {user.value && window.location.pathname !== "/login" ? (
         <div>
           <header className="App-header">
             <NavBar />
             <AlertBar />
           </header>
           <Outlet />
-          {window.location.pathname === "/login" ? <Navigate to="/" /> : <></>}
         </div>
       ) : (
         <div>
