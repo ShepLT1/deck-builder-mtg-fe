@@ -4,11 +4,11 @@ import { selectCards, selectTotalPages, getCardsByPage } from "./cardsSlice"
 import { Grid, Pagination } from "@mui/material"
 import { setCard, Card } from "../card/cardSlice"
 import BaseModal from "../baseModal/BaseModal"
-import { CardForm } from "../card/CardForm"
 import { updateBaseModal } from "../baseModal/baseModalSlice"
 import { DisplayCard } from "../../components/displayCard"
 import { PageHeader } from "../../components/pageHeader"
 import Search from "../search/Search"
+import { instance } from "../../utils/api/axios.config"
 
 export function Cards() {
   const cards = useAppSelector(selectCards)
@@ -27,8 +27,26 @@ export function Cards() {
   }
 
   const handleCreateNewCardClick = () => {
-    dispatch(setCard({ id: 0, name: "", abilities: [], count: 0 } as Card))
-    dispatch(updateBaseModal(true))
+    // dispatch(setCard({ id: 0, name: "", abilities: [], count: 0 } as Card))
+    // dispatch(updateBaseModal(true))
+  }
+
+  const test = async () => {
+    const response = await instance({
+      method: "post",
+      url: `/cards/planeswalkers`,
+      data: {
+        name: "Nicol Bolas, Planeswalker",
+        abilities: [
+          "+3: Destroy target noncreature permanent.",
+          "-2: Gain control of target creature.",
+          "-9: Nicol Bolas, Dragon-God deals 7 damage to any target. You draw seven cards.",
+        ],
+        manaCost: [16, 2, 3, 3, 4],
+        loyalty: 5,
+      },
+    })
+    console.log(response)
   }
 
   return (
@@ -51,7 +69,8 @@ export function Cards() {
           onChange={handlePageChange}
         />
       </Grid>
-      <BaseModal children={<CardForm />} />
+      <button onClick={test}>Test</button>
+      {/* <BaseModal children={<CardForm />} /> */}
     </Grid>
   )
 }

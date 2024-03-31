@@ -6,6 +6,8 @@ import { store } from "./app/store"
 import { Decks } from "./features/decks/Decks"
 import { Cards } from "./features/cards/Cards"
 import { Deck } from "./features/deck/Deck"
+import { Collection } from "./features/collection/Collection"
+import { Collectibles } from "./features/collectibles/Collectibles"
 import Login from "./features/user/Login"
 import Register from "./features/user/Register"
 import App from "./App"
@@ -23,6 +25,14 @@ const router = createBrowserRouter([
       {
         path: "/cards",
         element: <Cards />,
+      },
+      {
+        path: "/collection",
+        element: <Collection />,
+      },
+      {
+        path: "/collectibles",
+        element: <Collectibles />,
       },
       {
         path: "/decks/:id",

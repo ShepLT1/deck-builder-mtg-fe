@@ -6,6 +6,8 @@ export interface Card {
   id: number
   name: string
   abilities: string[]
+  dual: Card | null
+  imageUri: string
   count: number
 }
 
@@ -13,8 +15,21 @@ export interface Land extends Card {
   colors: string[]
 }
 
+export interface Mana {
+  id: number
+  type: string
+  color: string
+  value: string
+}
+
+export interface ManaSymbol {
+  id: number
+  name: string
+  manaList: Mana[]
+}
+
 export interface Spell extends Card {
-  manaCost: string[]
+  manaCost: ManaSymbol[]
   type: string
 }
 
@@ -42,7 +57,7 @@ export function isCreature(object: any): object is Creature {
 }
 
 const initialState: CardState = {
-  value: { id: 0, name: "", abilities: [], count: 0 },
+  value: { id: 0, name: "", abilities: [], dual: null, imageUri: "", count: 0 },
   status: "idle",
 }
 

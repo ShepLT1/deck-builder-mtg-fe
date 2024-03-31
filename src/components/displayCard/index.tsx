@@ -6,7 +6,12 @@ import {
   isCreature,
 } from "../../features/card/cardSlice"
 import {
+  Collectible,
+  isCollectible,
+} from "../../features/collectibles/collectiblesSlice"
+import {
   Card as BasicCard,
+  CardMedia,
   CardContent,
   Typography,
   Grid,
@@ -25,10 +30,14 @@ import {
   getCardsByPage,
   selectCurrentPage,
 } from "../../features/cards/cardsSlice"
+import {
+  addCollectibleToCollection,
+  removeCollectibleFromCollection,
+} from "../../features/collection/collectionSlice"
 
 interface CardProps {
-  card: Card
-  page: "deck" | "card"
+  card: Card | Collectible
+  page: "deck" | "card" | "collection" | "collectible"
 }
 
 export function DisplayCard(props: CardProps) {
@@ -45,6 +54,14 @@ export function DisplayCard(props: CardProps) {
   const handleDeleteCard = async (card_id: number) => {
     await dispatch(deleteCard(card_id))
     dispatch(getCardsByPage(currentPage))
+  }
+
+  const handleAddToCollection = async (card_id: number) => {
+    await dispatch(addCollectibleToCollection(card_id))
+  }
+
+  const handleRemoveFromCollection = async (card_id: number) => {
+    await dispatch(removeCollectibleFromCollection(card_id))
   }
 
   const deckCardOptionButtons = [
@@ -79,88 +96,83 @@ export function DisplayCard(props: CardProps) {
     </Button>,
   ]
 
+  const collectibleOptionButtons = [
+    <Button
+      key="add-to-collection"
+      onClick={() => handleAddToCollection(props.card.id)}
+    >
+      Add to Collection
+    </Button>,
+  ]
+
+  const collectionOptionsButtons = [
+    <Button
+      key="remove-from-collection"
+      onClick={() => handleRemoveFromCollection(props.card.id)}
+    >
+      Remove from Collection
+    </Button>,
+  ]
+
   return (
     <BasicCard
-      sx={{ minWidth: 275, maxWidth: 275, minHeight: 350, margin: 1 }}
-      variant="outlined"
+      sx={{ minWidth: 225, maxWidth: 275, minHeight: 350, margin: 1 }}
+      // variant="outlined"
     >
-      <CardContent sx={{ position: "relative", height: "calc(100% - 40px)" }}>
+      <CardContent>
         <Grid container justifyContent="space-between">
           <Grid item xs={9}>
-            <Typography variant="h6" textAlign={"start"} gutterBottom>
-              {props.card.name}
-            </Typography>
+            {isCollectible(props.card) ? (
+              <>
+                <Typography variant="h6" textAlign={"start"} gutterBottom>
+                  {props.card.card.name +
+                    (props.card.promo || props.card.finish !== "NONFOIL"
+                      ? " (" +
+                        (props.card.promo ? props.card.promo + " " : "") +
+                        (props.card.finish !== "NONFOIL"
+                          ? props.card.finish
+                          : "") +
+                        ")"
+                      : "")}
+                </Typography>
+                <Typography variant="body2" textAlign={"start"} gutterBottom>
+                  {props.card.set.name}
+                </Typography>
+                <Typography variant="body2" textAlign={"start"} gutterBottom>
+                  {"Collector #: " + props.card.collectorNumber}
+                </Typography>
+              </>
+            ) : (
+              <></>
+            )}
           </Grid>
-          {props.page === "deck" ? (
+          {props.page === "deck" && !isCollectible(props.card) ? (
             <Typography variant="h6" textAlign={"end"} gutterBottom>
               x{props.card.count}
             </Typography>
           ) : (
-            <OptionPopover options={cardOptionButtons} />
+            <OptionPopover
+              options={
+                isCollectible(props.card)
+                  ? props.page === "collection"
+                    ? collectionOptionsButtons
+                    : collectibleOptionButtons
+                  : cardOptionButtons
+              }
+            />
           )}
         </Grid>
-        <Grid container justifyContent="space-between">
-          <Grid item xs={9}>
-            <Typography
-              variant="subtitle2"
-              color="text.secondary"
-              textAlign={"left"}
-            >
-              {isLand(props.card) ? <>{props.card.colors.join(", ")}</> : <></>}
-              {isSpell(props.card) ? (
-                <>{props.card.manaCost.join(", ")}</>
-              ) : (
-                <></>
-              )}
-            </Typography>
-          </Grid>
-          {props.page === "deck" ? (
-            <OptionPopover options={deckCardOptionButtons} />
-          ) : isSpell(props.card) ? (
-            <Typography variant="subtitle1">
-              {props.card.type.substring(0, 4)}
-            </Typography>
-          ) : (
-            <Typography variant="subtitle1">LAND</Typography>
-          )}
-        </Grid>
-        <hr />
-        {isCreature(props.card) && props.card.attributes[0] ? (
-          <Typography variant="body2">
-            {props.card.attributes.join(", ")}
-            <br />
-            <br />
-          </Typography>
-        ) : (
-          <></>
-        )}
-        {props.card.abilities != null && props.card.abilities[0] != null ? (
-          <>
-            {props.card.abilities.map((ability) => (
-              <Typography
-                textAlign={"start"}
-                key={ability}
-                sx={{ marginBottom: 2 }}
-              >
-                {ability}
-              </Typography>
-            ))}
-          </>
-        ) : (
-          <></>
-        )}
-        {isCreature(props.card) ? (
-          <Typography
-            textAlign={"end"}
-            sx={{ position: "absolute", right: 16, bottom: 16 }}
-          >
-            {props.card.power} / {props.card.toughness}
-            <br />
-          </Typography>
-        ) : (
-          <></>
-        )}
       </CardContent>
+      <CardMedia
+        component="img"
+        alt={isCollectible(props.card) ? props.card.card.name : props.card.name}
+        height="350"
+        image={
+          isCollectible(props.card)
+            ? props.card.imageUri[0]
+            : props.card.imageUri
+        }
+      />
     </BasicCard>
   )
 }

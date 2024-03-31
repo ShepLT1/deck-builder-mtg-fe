@@ -26,6 +26,7 @@ export default function Search(props: SearchProps) {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
+  // TODO: change useEffect to handle collection search
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
       if (search.input === "") {

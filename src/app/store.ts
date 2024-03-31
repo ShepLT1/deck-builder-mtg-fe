@@ -8,6 +8,8 @@ import cardsReducer from "../features/cards/cardsSlice"
 import searchReducer from "../features/search/searchSlice"
 import userReducer from "../features/user/userSlice"
 import loadingIndicatorReducer from "../features/loadingIndicator/loadingIndicatorSlice"
+import collectionReducer from "../features/collection/collectionSlice"
+import collectiblesReducer from "../features/collectibles/collectiblesSlice"
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +22,8 @@ export const store = configureStore({
     search: searchReducer,
     user: userReducer,
     loadingIndicator: loadingIndicatorReducer,
+    collection: collectionReducer,
+    collectibles: collectiblesReducer,
   },
 })
 
